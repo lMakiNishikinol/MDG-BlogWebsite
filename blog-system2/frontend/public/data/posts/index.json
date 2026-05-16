@@ -1,0 +1,116 @@
+{
+  "posts": [
+    {
+      "slug": "智能基座成立大会",
+      "title": "智能基座成立大会",
+      "summary": "智能基座2025年成立大会，包含部长自我介绍、游戏体验环节、现场教学本地部署AI项目等活动。",
+      "publishDate": "2025-10-18",
+      "coverImage": "/data/posts/cover/成立大会.png"
+    },
+    {
+      "slug": "py_test",
+      "title": "技术部论文复现组——Python测试题",
+      "summary": "用于帮助大家自我评估能力的Python测试题，分为Level 1（基础）、Level 2（进阶）、Level 3（挑战）三个等级。",
+      "publishDate": "2025-10-26",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    },
+    {
+      "slug": "1st_meeting",
+      "title": "机器学习导论",
+      "summary": "介绍机器学习的本质定义、三大主流学习范式（有监督学习、无监督学习、强化学习）等核心概念。",
+      "publishDate": "2025-10-19",
+      "coverImage": "/data/posts/cover/1.png"
+    },
+    {
+      "slug": "2nd_meeting",
+      "title": "Python测试题讲评",
+      "summary": "介绍资料搜索方法、论文文献网站使用，布置阅读《深度学习入门：基于Python的理论与实现》（鱼书）的学习任务。",
+      "publishDate": "2025-10-26",
+      "coverImage": "/data/posts/cover/2.png"
+    },
+    {
+      "slug": "3rd_meeting",
+      "title": "深度学习四个训练流程",
+      "summary": "介绍如何阅读一篇文献、VGG论文阅读任务布置，以及MLP训练流程的通俗讲解。",
+      "publishDate": "2025-11-02",
+      "coverImage": "/data/posts/cover/3.png"
+    },
+    {
+      "slug": "4th_meeting",
+      "title": "卷积神经网络",
+      "summary": "介绍码界杯算法比赛、MNIST数据集处理、CNN模型搭建实践任务，以及数据读取与预处理的方法。",
+      "publishDate": "2025-11-09",
+      "coverImage": "/data/posts/cover/4.png"
+    },
+    {
+      "slug": "5th_meeting",
+      "title": "学习相关的技巧",
+      "summary": "Kaggle房价预测竞赛任务布置、测试题评讲，以及神经网络批量前向传播的矩阵运算详解。",
+      "publishDate": "2025-11-30",
+      "coverImage": "/data/posts/cover/5.png"
+    },
+    {
+      "slug": "6th_meeting",
+      "title": "过拟合与正则化",
+      "summary": "VGG代码实现阅读任务、过拟合与正则化技术讲解，包括L2正则化、Dropout等常用方法。",
+      "publishDate": "2025-12-07",
+      "coverImage": "/data/posts/cover/6.png"
+    },
+    {
+      "slug": "7th_meeting",
+      "title": "初始化与学期收尾",
+      "summary": "寒假学习任务安排、强化学习入门书籍推荐，以及神经网络参数初始化方法的数学推导。",
+      "publishDate": "2025-12-14",
+      "coverImage": "/data/posts/cover/7.png"
+    },
+    {
+      "slug": "8th_meeting_resnet",
+      "title": "Resnet学习总结",
+      "summary": "通过残差连接增加网络深度",
+      "publishDate": "2026-3-22",
+      "coverImage": "/data/posts/cover/8.png"
+    },
+    {
+      "slug": "9th_meeting_YOLO_archive",
+      "title": "You Only Look Once",
+      "summary": "目标检测模型",
+      "publishDate": "2026-3-29",
+      "coverImage": "/data/posts/cover/9.png"
+    },
+    {
+      "slug": "10th_meeting_img_seg",
+      "title": "图像分割",
+      "summary": "图像分割",
+      "publishDate": "2026-4-12",
+      "coverImage": "/data/posts/cover/10.png"
+    },
+    {
+      "slug": "11th_meeting_RL",
+      "title": "强化学习",
+      "summary": "强化学习",
+      "publishDate": "2026-4-19",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    },
+    {
+      "slug": "12th_meeting_NLP",
+      "title": "NLP",
+      "summary": "介绍自然语言处理（NLP）",
+      "publishDate": "2026-4-26",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    },
+    {
+      "slug": "13th_meeting",
+      "title": "多模态、CLIP：谜语人之间如何对上电波",
+      "summary": "多模态、CLIP",
+      "publishDate": "2026-5-10",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    },
+    {
+      "slug": "14th_meeting",
+      "title": "`Diffusion模型介绍`",
+      "summary": "多模态、CLIP",
+      "publishDate": "2026-5-17",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "notices": [
+    {
+      "slug": "welcome",
+      "title": "欢迎来到暨珠智基论文复现组",
+      "publishDate": "2025-10-18",
+      "pinned": false
+    },
+    {
+      "slug": "winter_task",
+      "title": "寒假任务",
+      "publishDate": "2025-12-14",
+      "pinned": false
+    },
+    {
+      "slug": "3.22_pre_task",
+      "title": "分享会预备",
+      "publishDate": "2026-3-18",
+      "pinned": false
+    },
+    {
+      "slug": "daibu",
+      "title": "代部招募",
+      "publishDate": "2026-3-22",
+      "pinned": true
+    },
+    {
+      "slug": "8th_meeting_review",
+      "title": "3.22分享会回顾",
+      "publishDate": "2026-3-22",
+      "pinned": false
+    },
+    {
+      "slug": "9th_meeting_review",
+      "title": "分享会任务与预习",
+      "publishDate": "2026-4-2",
+      "pinned": false
+    }
+  ]
+}

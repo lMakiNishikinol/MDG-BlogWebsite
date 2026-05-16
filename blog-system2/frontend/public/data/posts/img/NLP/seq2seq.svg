@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="320" viewBox="0 0 1100 320" role="img" aria-label="Seq2Seq encoder decoder diagram">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#222" />
+    </marker>
+    <style>
+      .label { font: 24px 'Times New Roman', serif; fill: #222; }
+      .small { font: 20px 'Times New Roman', serif; fill: #222; }
+      .section { font: 26px 'Segoe UI', sans-serif; font-weight: 600; fill: #222; }
+      .edge { stroke: #222; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .state { fill: #dfecc1; stroke: #444; stroke-width: 2; }
+      .token { fill: #bfe6ff; stroke: #444; stroke-width: 2; }
+      .context { fill: #d8c9ef; stroke: #444; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1100" height="320" fill="#fff" />
+
+  <rect x="120" y="110" width="70" height="90" class="state" />
+  <rect x="250" y="110" width="70" height="90" class="state" />
+  <rect x="380" y="110" width="70" height="90" class="state" />
+
+  <text x="144" y="165" class="label">h1</text>
+  <text x="274" y="165" class="label">h2</text>
+  <text x="404" y="165" class="label">h3</text>
+
+  <circle cx="155" cy="255" r="30" class="token" />
+  <circle cx="285" cy="255" r="30" class="token" />
+  <circle cx="415" cy="255" r="30" class="token" />
+
+  <text x="142" y="266" class="label">x1</text>
+  <text x="272" y="266" class="label">x2</text>
+  <text x="402" y="266" class="label">x3</text>
+
+  <circle cx="540" cy="70" r="32" class="context" />
+  <text x="531" y="81" class="label">c</text>
+
+  <rect x="665" y="110" width="70" height="90" class="state" />
+  <rect x="795" y="110" width="70" height="90" class="state" />
+  <rect x="925" y="110" width="70" height="90" class="state" />
+
+  <text x="686" y="165" class="label">s1</text>
+  <text x="816" y="165" class="label">s2</text>
+  <text x="946" y="165" class="label">s3</text>
+
+  <circle cx="700" cy="55" r="30" class="context" />
+  <circle cx="830" cy="55" r="30" class="context" />
+  <circle cx="960" cy="55" r="30" class="context" />
+
+  <text x="687" y="66" class="label">y1</text>
+  <text x="817" y="66" class="label">y2</text>
+  <text x="947" y="66" class="label">y3</text>
+
+  <line x1="190" y1="155" x2="250" y2="155" class="edge" />
+  <line x1="320" y1="155" x2="380" y2="155" class="edge" />
+  <line x1="450" y1="145" x2="512" y2="83" class="edge" />
+  <line x1="572" y1="83" x2="665" y2="145" class="edge" />
+  <line x1="735" y1="155" x2="795" y2="155" class="edge" />
+  <line x1="865" y1="155" x2="925" y2="155" class="edge" />
+
+  <line x1="155" y1="225" x2="155" y2="200" class="edge" />
+  <line x1="285" y1="225" x2="285" y2="200" class="edge" />
+  <line x1="415" y1="225" x2="415" y2="200" class="edge" />
+
+  <line x1="700" y1="110" x2="700" y2="85" class="edge" />
+  <line x1="830" y1="110" x2="830" y2="85" class="edge" />
+  <line x1="960" y1="110" x2="960" y2="85" class="edge" />
+
+  <text x="205" y="40" class="section">Encoder</text>
+  <text x="740" y="40" class="section">Decoder</text>
+
+  <text x="105" y="302" class="small">Input sequence</text>
+  <text x="828" y="302" class="small">Output sequence</text>
+</svg>

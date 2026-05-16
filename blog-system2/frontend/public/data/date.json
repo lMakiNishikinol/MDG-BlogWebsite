@@ -1,0 +1,284 @@
+{
+  "range": {
+    "start": "2026-03-09",
+    "end": "2026-07-27"
+  },
+  "events": [
+    {
+      "date": "2026-03-05",
+      "title": "教职工开学",
+      "description": "教职工开学日",
+      "type": "teacher-start"
+    },
+    {
+      "date": "2026-03-09",
+      "title": "学生上课",
+      "description": "学生正式上课首日",
+      "type": "student-start"
+    },
+    {
+      "date": "2026-03-22",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-03-29",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-04-05",
+      "title": "清明节",
+      "description": "清明节法定节假日",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-04-12",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-04-19",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-04-26",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-05-01",
+      "title": "劳动节",
+      "description": "劳动节法定节假日",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-05-10",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-05-17",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-05-24",
+      "title": "分享会",
+      "description": "每周分享与讨论,若该日有六级口语考试,分享会取消",
+      "type": "share"
+    },
+    {
+      "date": "2026-05-31",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-06-07",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-06-14",
+      "title": "分享会",
+      "description": "每周分享与讨论",
+      "type": "share"
+    },
+    {
+      "date": "2026-06-17",
+      "title": "端午节",
+      "description": "端午节法定节假日",
+      "type": "holiday"
+    },
+    {
+      "date": "2026-06-20",
+      "title": "毕业典礼",
+      "description": "毕业典礼",
+      "type": "ceremony"
+    },
+    {
+      "date": "2026-06-28",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-06-29",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-06-30",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-01",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-02",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-03",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-04",
+      "title": "复习考试周",
+      "description": "第17周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-05",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-06",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-07",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-08",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-09",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-10",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-11",
+      "title": "复习考试周",
+      "description": "第18周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-12",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-13",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-14",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-15",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-16",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-17",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-18",
+      "title": "复习考试周",
+      "description": "第19周复习考试",
+      "type": "exam"
+    },
+    {
+      "date": "2026-07-19",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-20",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-21",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-22",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-23",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-24",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-25",
+      "title": "劳动实践周",
+      "description": "第20周劳动实践",
+      "type": "labor"
+    },
+    {
+      "date": "2026-07-27",
+      "title": "暑假",
+      "description": "暑假开始",
+      "type": "holiday"
+    }
+  ]
+}

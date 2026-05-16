@@ -1,0 +1,223 @@
+{
+  "categories": [
+    {
+      "id": "papers",
+      "name": "论文与代码",
+      "icon": "book",
+      "description": "精选深度学习与计算机视觉领域的经典论文与数据集",
+      "items": [
+        {
+          "id": "paper-1",
+          "title": "VGG 论文",
+          "description": "Very Deep Convolutional Networks for Large-Scale Image Recognition，Visual Geometry Group（VGG）提出的论文",
+          "url": "https://arxiv.org/abs/1409.1556",
+          "tags": ["CNN", "论文"]
+        },
+        {
+          "id": "paper-2",
+          "title": "VGG 论文（中译版）",
+          "description": "Very Deep Convolutional Networks for Large-Scale Image Recognition 中文翻译版",
+          "url": "https://noahsnail.com/2017/08/17/2017-08-17-VGG%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91%E2%80%94%E2%80%94%E4%B8%AD%E6%96%87%E7%89%88/",
+          "tags": ["CNN", "中文"]
+        },
+        {
+          "id": "paper-3",
+          "title": "MNIST 数据集",
+          "description": "手写数字识别数据集",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/MNIST.zip",
+          "tags": ["数据集", "CNN"]
+        },
+        {
+          "id": "paper-4",
+          "title": "ResNet 论文",
+          "description": "Deep Residual Learning for Image Recognition，残差神经网络",
+          "url": "https://arxiv.org/abs/1512.03385",
+          "tags": ["ResNet", "论文"]
+        },
+        {
+          "id": "paper-5",
+          "title": "YOLO v1 论文",
+          "description": "You Only Look Once，目标检测算法族",
+          "url": "https://arxiv.org/abs/1506.02640",
+          "tags": ["YOLO", "目标检测"]
+        },
+        {
+          "id": "paper-6",
+          "title": "YOLO v2 论文",
+          "description": "YOLO9000: Better, Faster, Stronger",
+          "url": "https://arxiv.org/abs/1612.08242",
+          "tags": ["YOLO", "目标检测"]
+        }
+      ]
+    },
+    {
+      "id": "blogs",
+      "name": "博客与指南",
+      "icon": "globe",
+      "description": "优质技术博客、教程与学习平台",
+      "items": [
+        {
+          "id": "blog-1",
+          "title": "Dive Into Deep Learning",
+          "description": "动手学深度学习，交互式深度学习教材，含代码、数学和讨论，提供 PyTorch 和 TensorFlow 实现。",
+          "url": "https://zh-v2.d2l.ai/chapter_preface/index.html#",
+          "tags": ["深度学习", "教程"]
+        },
+        {
+          "id": "blog-2",
+          "title": "OpenAI Spinning Up",
+          "description": "强化学习OpenAI优化策略，OpenAI官方强化学习入门教程。",
+          "url": "https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html",
+          "tags": ["强化学习", "教程"]
+        },
+        {
+          "id": "blog-3",
+          "title": "李沐：动手学深度学习",
+          "description": "李沐：动手学深度学习（B站视频教程）",
+          "url": "https://www.bilibili.com/video/BV1if4y147hS/?spm_id_from=333.999.0.0",
+          "tags": ["深度学习", "视频"]
+        },
+        {
+          "id": "blog-4",
+          "title": "吴恩达深度学习",
+          "description": "吴恩达深度学习课程（B站视频教程）",
+          "url": "https://www.bilibili.com/video/BV11H4y1F7uH/?spm_id_from=333.337.search-card.all.click&vd_source=319e14c34f31cf3b9f5b3e554c92ce92",
+          "tags": ["深度学习", "视频"]
+        }
+      ]
+    },
+    {
+      "id": "books",
+      "name": "推荐书籍",
+      "icon": "book",
+      "description": "精选深度学习与强化学习领域的经典书籍",
+      "items": [
+        {
+          "id": "book-1",
+          "title": "《深度学习入门：基于Python的理论与实现》",
+          "description": "深度学习入门，咱们简称鱼书",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%EF%BC%9A%E5%9F%BA%E4%BA%8Epython%E7%9A%84%E7%90%86%E8%AE%BA%E4%B8%8E%E5%AE%9E%E7%8E%B0.pdf",
+          "tags": ["深度学习", "入门"],
+          "pinned": true
+        },
+        {
+          "id": "book-2",
+          "title": "《白话强化学习与PyTorch》",
+          "description": "用大白话讲解强化学习基本概念，数学推导较少，内容通俗易懂，适合入门。",
+          "url": "https://yun.weicheng.men/Book/%E7%99%BD%E8%AF%9D%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%8EPyTorch.pdf",
+          "tags": ["强化学习", "入门"],
+          "pinned": true
+        },
+        {
+          "id": "book-3",
+          "title": "Easy RL 蘑菇书 v1.0.6",
+          "description": "以更深入的角度入门强化学习，理论体系完整，原理讲解深入透彻，数学推导严谨，我们简称蘑菇书。",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/EasyRL_v1.0.6.pdf",
+          "tags": ["强化学习", "进阶"],
+          "pinned": true
+        },
+        {
+          "id": "book-4",
+          "title": "《Python数据分析从入门到实践》",
+          "description": "Python数据分析从入门到实践",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/Python%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5.pdf",
+          "tags": ["Python", "数据分析"]
+        }
+      ]
+    },
+    {
+      "id": "links",
+      "name": "重要网址",
+      "icon": "link",
+      "description": "学习与开发中常用的重要网站",
+      "items": [
+        {
+          "id": "link-1",
+          "title": "Kaggle",
+          "description": "数据科学竞赛平台",
+          "url": "https://www.kaggle.com",
+          "tags": ["竞赛", "数据科学"]
+        },
+        {
+          "id": "link-2",
+          "title": "arXiv",
+          "description": "最新学术论文预印本平台，涵盖 CS、数学、物理等领域。",
+          "url": "https://arxiv.org",
+          "tags": ["论文", "学术"]
+        },
+        {
+          "id": "link-3",
+          "title": "GitHub",
+          "description": "全球最大代码托管平台",
+          "url": "https://github.com",
+          "tags": ["代码", "开源"]
+        },
+        {
+          "id": "link-4",
+          "title": "Hugging Face",
+          "description": "预训练模型与数据集仓库，NLP/CV 领域的 GitHub。",
+          "url": "https://huggingface.co",
+          "tags": ["模型", "数据集"]
+        },
+        {
+          "id": "link-5",
+          "title": "Papers With Code",
+          "description": "机器学习论文与代码实现对照，追踪最新 SOTA 结果。",
+          "url": "https://paperswithcode.com",
+          "tags": ["论文", "代码"]
+        },
+        {
+          "id": "link-6",
+          "title": "Google Colab",
+          "description": "免费 GPU 云端 Jupyter Notebook 环境，适合快速实验和训练。",
+          "url": "https://colab.research.google.com",
+          "tags": ["GPU", "云平台"]
+        },
+        {
+          "id": "link-7",
+          "title": "Cloud Studio",
+          "description": "腾讯云 Cloud Studio，免费算力+WebIDE",
+          "url": "https://ide.cloud.tencent.com/",
+          "tags": ["算力", "IDE"]
+        },
+        {
+          "id": "link-8",
+          "title": "LeetCode",
+          "description": "代码刷题平台",
+          "url": "https://leetcode.cn/",
+          "tags": ["刷题", "算法"]
+        },
+        {
+          "id": "link-9",
+          "title": "洛谷",
+          "description": "代码刷题平台",
+          "url": "https://www.luogu.com.cn/",
+          "tags": ["刷题", "算法"]
+        }
+
+      ]
+    },
+    {
+      "id": "others",
+      "name": "其他",
+      "icon": "tool",
+      "description": "Python 练习、环境配置等学习辅助资料",
+      "items": [
+        {
+          "id": "other-1",
+          "title": "130道Python练习题",
+          "description": "130道Python练习题",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/130%E9%81%93python%E7%BB%83%E4%B9%A0%E9%A2%98.pdf",
+          "tags": ["Python", "练习"]
+        },
+        {
+          "id": "other-2",
+          "title": "conda命令参考资料",
+          "description": "conda命令参考资料",
+          "url": "https://mdg-papergroup-1382022823.cos.ap-guangzhou.myqcloud.com/conda%E5%91%BD%E4%BB%A4%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99.pdf",
+          "tags": ["conda", "工具"]
+        }
+      ]
+    }
+  ]
+}
