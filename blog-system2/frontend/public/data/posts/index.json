@@ -107,9 +107,16 @@
     },
     {
       "slug": "14th_meeting",
-      "title": "`Diffusion模型介绍`",
-      "summary": "多模态、CLIP",
+      "title": "Diffusion模型介绍",
+      "summary": "Diffusion模型介绍",
       "publishDate": "2026-5-17",
+      "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
+    },
+    {
+      "slug": "15th_meeting",
+      "title": "Agent",
+      "summary": "Agent",
+      "publishDate": "2026-5-24",
       "coverImage": "https://cdn.wuyilin18.top/img/7245943.png"
     }
   ]

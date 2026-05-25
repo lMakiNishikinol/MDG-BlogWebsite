@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BPE 分词动画演示</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --panel: #ffffff;
+      --ink: #1e2428;
+      --muted: #65717a;
+      --line: #d8d2c7;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #0f766e;
+      --green-soft: #ccfbf1;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --red: #b91c1c;
+      --shadow: 0 12px 32px rgba(30, 36, 40, 0.10);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .app {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 28px auto;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 260px;
+    }
+
+    .number-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 14px;
+      box-shadow: 0 1px 0 rgba(30, 36, 40, 0.03);
+    }
+
+    .number-control input {
+      width: 58px;
+      height: 28px;
+      border: 1px solid #cfd7df;
+      border-radius: 6px;
+      padding: 0 6px;
+      color: var(--ink);
+      font: inherit;
+      background: #f8fafc;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      height: 38px;
+      padding: 0 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 1px 0 rgba(30, 36, 40, 0.03);
+    }
+
+    button.primary {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .source {
+      margin-bottom: 16px;
+    }
+
+    .source-text {
+      display: block;
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid #d7dce2;
+      background: #f8fafc;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      min-height: 64px;
+      background: #fbfaf7;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .step.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .explain {
+      border-left: 4px solid var(--blue);
+      background: #eef4ff;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      line-height: 1.65;
+      color: #24324a;
+      margin-bottom: 16px;
+      min-height: 56px;
+    }
+
+    .corpus {
+      display: grid;
+      gap: 10px;
+    }
+
+    .word-row {
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #e6e1d8;
+      border-radius: var(--radius);
+      background: #fffdf9;
+    }
+
+    .word-label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .weight {
+      display: inline-flex;
+      margin-left: 5px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 12px;
+      vertical-align: 1px;
+    }
+
+    .tokens {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 34px;
+      align-items: center;
+    }
+
+    .token {
+      position: relative;
+      min-width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border-radius: var(--radius);
+      border: 1px solid #cfd7df;
+      background: #f8fafc;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 15px;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .token.scan-left,
+    .token.scan-right {
+      background: var(--amber-soft);
+      border-color: #f59e0b;
+      transform: translateY(-2px);
+    }
+
+    .token.best {
+      background: var(--green-soft);
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    .count-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .count-table th,
+    .count-table td {
+      border-bottom: 1px solid #ece7df;
+      padding: 9px 8px;
+      text-align: left;
+    }
+
+    .count-table th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .count-table tr.current {
+      background: var(--amber-soft);
+    }
+
+    .count-table tr.best {
+      background: var(--green-soft);
+    }
+
+    .count-table tr.tie {
+      background: #f0f9ff;
+    }
+
+    .pair {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-weight: 700;
+    }
+
+    .merge-history {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 34px;
+    }
+
+    .vocab-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      min-height: 34px;
+    }
+
+    .vocab-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 30px;
+      padding: 0 9px;
+      border-radius: var(--radius);
+      border: 1px solid #d5dde5;
+      background: #f8fafc;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    .vocab-chip.new {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #134e4a;
+      font-weight: 700;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #bfd7d4;
+      background: #f0fdfa;
+      color: #134e4a;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    .sample {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .subpanel h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #d9e3ea;
+      border-radius: var(--radius);
+      background: #f8fbfd;
+      color: #40515d;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .note strong {
+      color: var(--ink);
+    }
+
+    .sample-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .sample-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .encode-panel {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .encode-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .encode-status {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .token.changed {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #134e4a;
+      font-weight: 700;
+      transform: translateY(-2px);
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .round-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #a5f3fc;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 860px) {
+      header {
+        display: block;
+      }
+
+      .controls {
+        justify-content: flex-start;
+        margin-top: 14px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        width: min(100vw - 20px, 1180px);
+        margin: 18px auto;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .word-row {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>BPE 分词动画演示</h1>
+        <p class="lead">用一个教学版语料演示 BPE 的三个核心动作：统计相邻 token pair，合并最高频 pair，重新统计并重复。</p>
+      </div>
+      <div class="controls">
+        <button class="primary" id="nextBtn" type="button">下一步</button>
+        <button id="autoBtn" type="button">自动播放</button>
+        <button id="speedBtn" type="button">速度 1x</button>
+        <label class="number-control" for="mergeLimitInput">
+          <span>合并轮数</span>
+          <input id="mergeLimitInput" type="number" min="1" max="12" step="1" value="6">
+        </label>
+        <button id="resetBtn" type="button">重置</button>
+      </div>
+    </header>
+
+    <section class="status" aria-label="演示阶段">
+      <div class="step" data-phase="ready">
+        <strong>1. 初始化</strong>
+        <span>从字符级 token 开始。</span>
+      </div>
+      <div class="step" data-phase="scan">
+        <strong>2. 统计 pair</strong>
+        <span>逐个扫描相邻 token。</span>
+      </div>
+      <div class="step" data-phase="selected">
+        <strong>3. 选择最高频</strong>
+        <span>找到出现最多的 pair。</span>
+      </div>
+      <div class="step" data-phase="merge">
+        <strong>4. 合并并重复</strong>
+        <span>全局合并后重新统计。</span>
+      </div>
+    </section>
+
+    <section class="explain" id="explain"></section>
+
+    <section class="panel source">
+      <h2>训练短文</h2>
+        <p class="lead">下面的短文用来模拟训练语料。本演示直接扫描整段文字，空格和标点也会作为初始 token 参与统计。</p>
+        <div class="source-text" id="sourceText"></div>
+      </section>
+
+    <section class="layout">
+      <div class="panel">
+        <div class="round-badge" id="roundBadge"></div>
+        <h2>短文中的 token</h2>
+        <div class="corpus" id="corpus"></div>
+
+        <div class="bottom-grid">
+          <div class="subpanel">
+            <h2>词表</h2>
+            <div class="vocab-grid" id="vocab"></div>
+            <div class="note">
+              <strong>词表 vs 合并规则：</strong>词表表示当前有哪些 token 可以使用；合并规则表示编码新文本时按什么顺序把小 token 拼成大 token。
+            </div>
+          </div>
+
+          <div class="subpanel">
+            <h2>合并规则</h2>
+            <div class="merge-history" id="history"></div>
+
+            <div class="encode-panel">
+              <h2>编码新输入</h2>
+              <div class="sample-line">
+                <span class="sample-label">输入：</span>
+                <span class="pair" id="encodeInput"></span>
+              </div>
+              <div class="encode-controls">
+                <button id="encodeStepBtn" type="button">应用下一条规则</button>
+                <button id="encodeResetBtn" type="button">重置编码</button>
+                <span class="encode-status" id="encodeStatus"></span>
+              </div>
+              <div class="tokens" id="encodeTokens"></div>
+              <div class="note">
+                <strong>训练 vs 编码：</strong>训练阶段统计 pair 并学习合并规则；编码新输入时不再统计频率，而是按已经学到的规则顺序切分文本。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>相邻 pair 计数</h2>
+        <div id="counts"></div>
+
+        <div class="note">
+          <strong>并列说明：</strong>如果多个 pair 计数相同，本演示按扫描时第一次遇到的顺序选择其中一个。真实 tokenizer 训练中也需要固定的 tie-break 规则。
+        </div>
+
+        <div class="note" id="stopNote">
+          <strong>停止条件：</strong>本演示当前设置为合并 6 轮。真实 BPE 训练通常会按目标词表大小、合并次数或最低频率阈值停止。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const trainingText = "low tools help agents. lower cost tools help agents. the lowest cost agent uses newer tools.";
+    const encodeText = "low tools help agents.";
+
+    const defaultMergeLimit = 6;
+    let mergeLimit = defaultMergeLimit;
+    const speedOptions = [
+      { label: "0.5x", delay: 240 },
+      { label: "1x", delay: 120 },
+      { label: "2x", delay: 60 },
+      { label: "4x", delay: 30 }
+    ];
+    let state;
+    let timer = null;
+    let speedIndex = 1;
+    let encodeRuleIndex = 0;
+    let encodeTokens = [];
+    let changedEncodePositions = [];
+
+    const sourceTextEl = document.getElementById("sourceText");
+    const corpusEl = document.getElementById("corpus");
+    const countsEl = document.getElementById("counts");
+    const vocabEl = document.getElementById("vocab");
+    const historyEl = document.getElementById("history");
+    const encodeInputEl = document.getElementById("encodeInput");
+    const encodeTokensEl = document.getElementById("encodeTokens");
+    const encodeStatusEl = document.getElementById("encodeStatus");
+    const encodeStepBtn = document.getElementById("encodeStepBtn");
+    const encodeResetBtn = document.getElementById("encodeResetBtn");
+    const explainEl = document.getElementById("explain");
+    const roundBadgeEl = document.getElementById("roundBadge");
+    const nextBtn = document.getElementById("nextBtn");
+    const autoBtn = document.getElementById("autoBtn");
+    const speedBtn = document.getElementById("speedBtn");
+    const mergeLimitInput = document.getElementById("mergeLimitInput");
+    const resetBtn = document.getElementById("resetBtn");
+    const stopNoteEl = document.getElementById("stopNote");
+
+    const initialCorpus = [
+      { label: "全文", tokens: [...trainingText] }
+    ];
+
+    function initState() {
+      state = {
+        phase: "ready",
+        round: 1,
+        corpus: initialCorpus.map(item => ({
+          label: item.label,
+          tokens: [...item.tokens]
+        })),
+        scanPairs: [],
+        scanIndex: -1,
+        counts: new Map(),
+        selectedPair: null,
+        history: [],
+        lastMerged: null
+      };
+      resetEncoding();
+    }
+
+    function pairKey(left, right) {
+      return JSON.stringify([left, right]);
+    }
+
+    function splitPairKey(key) {
+      return JSON.parse(key);
+    }
+
+    function displayToken(token) {
+      return token
+        .replace(/ /g, "␠")
+        .replace(/\n/g, "↵")
+        .replace(/\t/g, "⇥");
+    }
+
+    function displayPairKey(key) {
+      const [left, right] = splitPairKey(key);
+      return `${displayToken(left)} ${displayToken(right)}`;
+    }
+
+    function buildScanPairs() {
+      const pairs = [];
+      state.corpus.forEach((row, rowIndex) => {
+        for (let pos = 0; pos < row.tokens.length - 1; pos += 1) {
+          pairs.push({
+            rowIndex,
+            pos,
+            left: row.tokens[pos],
+            right: row.tokens[pos + 1],
+            key: pairKey(row.tokens[pos], row.tokens[pos + 1])
+          });
+        }
+      });
+      return pairs;
+    }
+
+    function chooseBestPair() {
+      let best = null;
+      let bestCount = -1;
+      for (const [key, count] of state.counts.entries()) {
+        if (count > bestCount) {
+          best = key;
+          bestCount = count;
+        }
+      }
+      return best;
+    }
+
+    function bestPairCandidates() {
+      let bestCount = -1;
+      for (const count of state.counts.values()) {
+        if (count > bestCount) bestCount = count;
+      }
+      const candidates = [];
+      for (const [key, count] of state.counts.entries()) {
+        if (count === bestCount) candidates.push(key);
+      }
+      return { bestCount, candidates };
+    }
+
+    function mergeSelectedPair() {
+      const [left, right] = splitPairKey(state.selectedPair);
+      const merged = left + right;
+
+      state.corpus = state.corpus.map(row => {
+        const next = [];
+        for (let i = 0; i < row.tokens.length; i += 1) {
+          if (row.tokens[i] === left && row.tokens[i + 1] === right) {
+            next.push(merged);
+            i += 1;
+          } else {
+            next.push(row.tokens[i]);
+          }
+        }
+        return { ...row, tokens: next };
+      });
+
+      state.history.push({ left, right, merged });
+      state.lastMerged = merged;
+      state.selectedPair = null;
+      state.counts = new Map();
+      state.scanPairs = [];
+      state.scanIndex = -1;
+      state.round += 1;
+      state.phase = state.history.length >= mergeLimit ? "done" : "ready";
+      if (encodeRuleIndex > state.history.length) resetEncoding();
+    }
+
+    function step() {
+      if (state.phase === "done") return;
+
+      if (state.phase === "ready") {
+        state.scanPairs = buildScanPairs();
+        state.counts = new Map();
+        state.scanIndex = -1;
+        state.selectedPair = null;
+        state.phase = "scan";
+        render();
+        return;
+      }
+
+      if (state.phase === "scan") {
+        state.scanIndex += 1;
+        const item = state.scanPairs[state.scanIndex];
+        if (item) {
+          state.counts.set(item.key, (state.counts.get(item.key) || 0) + 1);
+        }
+        if (state.scanIndex >= state.scanPairs.length - 1) {
+          state.selectedPair = chooseBestPair();
+          state.phase = "selected";
+        }
+        render();
+        return;
+      }
+
+      if (state.phase === "selected") {
+        state.phase = "merge";
+        render();
+        return;
+      }
+
+      if (state.phase === "merge") {
+        mergeSelectedPair();
+        render();
+      }
+    }
+
+    function reset() {
+      stopAuto();
+      initState();
+      render();
+    }
+
+    function toggleAuto() {
+      if (timer) {
+        stopAuto();
+        return;
+      }
+      startAuto();
+    }
+
+    function startAuto() {
+      stopAuto();
+      autoBtn.textContent = "暂停";
+      timer = window.setInterval(() => {
+        if (state.phase === "done") {
+          stopAuto();
+          return;
+        }
+        step();
+      }, speedOptions[speedIndex].delay);
+    }
+
+    function stopAuto() {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+      autoBtn.textContent = "自动播放";
+    }
+
+    function changeSpeed() {
+      const wasRunning = Boolean(timer);
+      speedIndex = (speedIndex + 1) % speedOptions.length;
+      renderSpeed();
+      if (wasRunning) startAuto();
+    }
+
+    function clampMergeLimit(value) {
+      const parsed = Number.parseInt(value, 10);
+      if (Number.isNaN(parsed)) return defaultMergeLimit;
+      return Math.min(12, Math.max(1, parsed));
+    }
+
+    function changeMergeLimit() {
+      const nextLimit = clampMergeLimit(mergeLimitInput.value);
+      if (nextLimit === mergeLimit) {
+        renderMergeLimit();
+        return;
+      }
+      mergeLimit = nextLimit;
+      reset();
+    }
+
+    function getCurrentPair() {
+      if (state.phase !== "scan") return null;
+      return state.scanPairs[state.scanIndex] || null;
+    }
+
+    function tokenClass(rowIndex, pos, token) {
+      const current = getCurrentPair();
+      const classes = ["token"];
+
+      if (current && current.rowIndex === rowIndex && (current.pos === pos || current.pos + 1 === pos)) {
+        classes.push(current.pos === pos ? "scan-left" : "scan-right");
+      }
+
+      if ((state.phase === "selected" || state.phase === "merge") && state.selectedPair) {
+        const [left, right] = splitPairKey(state.selectedPair);
+        const row = state.corpus[rowIndex];
+        if (
+          (row.tokens[pos] === left && row.tokens[pos + 1] === right) ||
+          (row.tokens[pos - 1] === left && row.tokens[pos] === right)
+        ) {
+          classes.push("best");
+        }
+      }
+
+      if (state.lastMerged === token && state.phase === "ready") {
+        classes.push("best");
+      }
+
+      return classes.join(" ");
+    }
+
+    function renderCorpus() {
+      corpusEl.innerHTML = "";
+      state.corpus.forEach((row, rowIndex) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "word-row";
+
+        const label = document.createElement("div");
+        label.className = "word-label";
+        label.textContent = row.label;
+
+        const tokens = document.createElement("div");
+        tokens.className = "tokens";
+        row.tokens.forEach((token, pos) => {
+          const span = document.createElement("span");
+          span.className = tokenClass(rowIndex, pos, token);
+          span.textContent = displayToken(token);
+          tokens.appendChild(span);
+        });
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(tokens);
+        corpusEl.appendChild(wrapper);
+      });
+    }
+
+    function renderSourceText() {
+      sourceTextEl.textContent = trainingText;
+    }
+
+    function sortedCounts() {
+      return Array.from(state.counts.entries()).sort((a, b) => {
+        if (b[1] !== a[1]) return b[1] - a[1];
+        return a[0].localeCompare(b[0]);
+      });
+    }
+
+    function renderCounts() {
+      if (state.counts.size === 0) {
+        countsEl.innerHTML = `<p class="empty">点击“下一步”开始扫描相邻 token pair。</p>`;
+        return;
+      }
+
+      const current = getCurrentPair();
+      const best = state.selectedPair;
+      const bestInfo = state.counts.size > 0 ? bestPairCandidates() : { candidates: [] };
+      const rows = sortedCounts().map(([key, count]) => {
+        const isTiedBest = bestInfo.candidates.includes(key);
+        const rowClass = key === best ? "best" : current && key === current.key ? "current" : isTiedBest ? "tie" : "";
+        return `<tr class="${rowClass}">
+          <td><span class="pair">${escapeHtml(displayPairKey(key))}</span></td>
+          <td>${count}</td>
+        </tr>`;
+      }).join("");
+
+      countsEl.innerHTML = `<table class="count-table">
+        <thead>
+          <tr><th>Pair</th><th>计数</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    function renderHistory() {
+      if (state.history.length === 0) {
+        historyEl.innerHTML = `<span class="empty">还没有合并规则。</span>`;
+        return;
+      }
+      historyEl.innerHTML = state.history.map((item, index) => (
+        `<span class="chip">${index + 1}. ${escapeHtml(displayToken(item.left))} + ${escapeHtml(displayToken(item.right))} → ${escapeHtml(displayToken(item.merged))}</span>`
+      )).join("");
+    }
+
+    function initialVocabulary() {
+      const seen = new Set();
+      const tokens = [];
+      initialCorpus.forEach(row => {
+        row.tokens.forEach(char => {
+          if (!seen.has(char)) {
+            seen.add(char);
+            tokens.push(char);
+          }
+        });
+      });
+      return tokens;
+    }
+
+    function currentVocabulary() {
+      return [
+        ...initialVocabulary(),
+        ...state.history.map(item => item.merged)
+      ];
+    }
+
+    function renderVocabulary() {
+      const vocab = currentVocabulary();
+      vocabEl.innerHTML = vocab.map(token => {
+        const className = token === state.lastMerged ? "vocab-chip new" : "vocab-chip";
+        return `<span class="${className}">${escapeHtml(displayToken(token))}</span>`;
+      }).join("");
+    }
+
+    function applyMergeToTokens(tokens, rule) {
+      const { left, right, merged } = rule;
+      const next = [];
+      const changed = [];
+      for (let i = 0; i < tokens.length; i += 1) {
+        if (tokens[i] === left && tokens[i + 1] === right) {
+          changed.push(next.length);
+          next.push(merged);
+          i += 1;
+        } else {
+          next.push(tokens[i]);
+        }
+      }
+      return { tokens: next, changed };
+    }
+
+    function resetEncoding() {
+      encodeRuleIndex = 0;
+      encodeTokens = [...encodeText];
+      changedEncodePositions = [];
+    }
+
+    function stepEncoding() {
+      if (encodeRuleIndex >= state.history.length) return;
+      encodeRuleIndex += 1;
+      renderEncoding();
+    }
+
+    function replayEncodingToCurrentRule() {
+      let tokens = [...encodeText];
+      let changed = [];
+      for (let i = 0; i < encodeRuleIndex && i < state.history.length; i += 1) {
+        const result = applyMergeToTokens(tokens, state.history[i]);
+        tokens = result.tokens;
+        changed = i === encodeRuleIndex - 1 ? result.changed : [];
+      }
+      encodeTokens = tokens;
+      changedEncodePositions = changed;
+    }
+
+    function renderEncoding() {
+      replayEncodingToCurrentRule();
+      encodeInputEl.textContent = encodeText;
+      encodeTokensEl.innerHTML = encodeTokens.map((token, index) => {
+        const className = changedEncodePositions.includes(index) ? "token changed" : "token";
+        return `<span class="${className}">${escapeHtml(displayToken(token))}</span>`;
+      }).join("");
+
+      const total = state.history.length;
+      encodeStatusEl.textContent = `已应用 ${encodeRuleIndex} / ${total} 条规则`;
+      encodeStepBtn.disabled = encodeRuleIndex >= total;
+    }
+
+    function renderStatus() {
+      document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
+      const phase = state.phase === "done" ? "merge" : state.phase;
+      const target = document.querySelector(`.step[data-phase="${phase}"]`);
+      if (target) target.classList.add("active");
+      roundBadgeEl.textContent = state.phase === "done" ? "合并完成" : `第 ${Math.min(state.round, mergeLimit)} 轮`;
+    }
+
+    function renderExplain() {
+      const current = getCurrentPair();
+      if (state.phase === "ready") {
+        explainEl.textContent = state.history.length === 0
+          ? "初始状态下，整段短文直接被拆成字符级 token。空格和标点也会参与 pair 统计。下一步开始扫描相邻 token pair。"
+          : "上一轮合并已经完成。下一步会重新统计新的相邻 token pair。";
+      } else if (state.phase === "scan" && current) {
+        explainEl.textContent = `正在扫描 pair “${displayPairKey(current.key)}”，计数增加 1。`;
+      } else if (state.phase === "scan") {
+        explainEl.textContent = "正在准备扫描相邻 token pair。";
+      } else if (state.phase === "selected") {
+        const { bestCount, candidates } = bestPairCandidates();
+        const tieText = candidates.length > 1
+          ? ` 有 ${candidates.length} 个 pair 并列最高，本演示按扫描时第一次遇到的顺序选择 “${displayPairKey(state.selectedPair)}”。`
+          : "";
+        explainEl.textContent = `本轮最高频 pair 计数为 ${bestCount}。${tieText}下一步会在整个语料中合并选中的 pair。`;
+      } else if (state.phase === "merge") {
+        explainEl.textContent = `准备全局合并 “${displayPairKey(state.selectedPair)}”。注意：BPE 合并的是整个语料里所有相同的相邻 pair。`;
+      } else {
+        explainEl.textContent = `演示完成。本演示当前设置为合并 ${mergeLimit} 轮；真实 BPE 训练通常按目标词表大小、合并次数或最低频率阈值停止。`;
+      }
+    }
+
+    function renderButtons() {
+      nextBtn.disabled = state.phase === "done";
+      if (state.phase === "ready") nextBtn.textContent = "开始统计";
+      else if (state.phase === "scan") nextBtn.textContent = "扫描下一项";
+      else if (state.phase === "selected") nextBtn.textContent = "查看合并位置";
+      else if (state.phase === "merge") nextBtn.textContent = "执行合并";
+      else nextBtn.textContent = "已完成";
+    }
+
+    function renderSpeed() {
+      speedBtn.textContent = `速度 ${speedOptions[speedIndex].label}`;
+    }
+
+    function renderMergeLimit() {
+      mergeLimitInput.value = mergeLimit;
+      stopNoteEl.innerHTML = `<strong>停止条件：</strong>本演示当前设置为合并 ${mergeLimit} 轮。真实 BPE 训练通常会按目标词表大小、合并次数或最低频率阈值停止。`;
+    }
+
+    function render() {
+      renderStatus();
+      renderExplain();
+      renderSourceText();
+      renderCorpus();
+      renderCounts();
+      renderVocabulary();
+      renderHistory();
+      renderEncoding();
+      renderButtons();
+      renderSpeed();
+      renderMergeLimit();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    nextBtn.addEventListener("click", step);
+    autoBtn.addEventListener("click", toggleAuto);
+    speedBtn.addEventListener("click", changeSpeed);
+    mergeLimitInput.addEventListener("change", changeMergeLimit);
+    encodeStepBtn.addEventListener("click", stepEncoding);
+    encodeResetBtn.addEventListener("click", () => {
+      resetEncoding();
+      renderEncoding();
+    });
+    resetBtn.addEventListener("click", reset);
+
+    initState();
+    render();
+  </script>
+</body>
+</html>

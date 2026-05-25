@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Temperature 采样演示</title>
+  <style>
+    :root {
+      --bg: #f7f5ef;
+      --panel: #ffffff;
+      --ink: #20262b;
+      --muted: #65717a;
+      --line: #d8d2c7;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #0f766e;
+      --green-soft: #ccfbf1;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --rose: #be123c;
+      --rose-soft: #ffe4e6;
+      --shadow: 0 12px 32px rgba(32, 38, 43, 0.10);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .app {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 28px auto;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 320px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      height: 38px;
+      padding: 0 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 1px 0 rgba(32, 38, 43, 0.03);
+    }
+
+    button.primary {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    button.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      font-weight: 700;
+    }
+
+    .context {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .context-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .sentence {
+      font-size: 22px;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    .blank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 92px;
+      height: 36px;
+      padding: 0 12px;
+      border-bottom: 3px solid var(--blue);
+      color: var(--blue);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .temperature-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid #d9e3ea;
+      border-radius: var(--radius);
+      background: #f8fbfd;
+    }
+
+    .slider-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .slider-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .temp-value {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      height: 48px;
+      border-radius: var(--radius);
+      background: var(--blue);
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .formula {
+      margin: 0 0 16px;
+      padding: 14px;
+      border-left: 4px solid var(--blue);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: #eef4ff;
+      line-height: 1.7;
+      color: #24324a;
+    }
+
+    .formula code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+    }
+
+    .math-formula {
+      display: block;
+      margin-top: 6px;
+      color: #172554;
+      font-weight: 700;
+      font-size: 22px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 2px;
+    }
+
+    .symbol-note {
+      display: block;
+      margin-top: 8px;
+      color: #40515d;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .sampling-box {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid #d9e3ea;
+      border-radius: var(--radius);
+      background: #f8fbfd;
+    }
+
+    .mode-row,
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .filter-control {
+      display: none;
+      grid-template-columns: 76px minmax(160px, 1fr) 52px;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .filter-control.active {
+      display: grid;
+    }
+
+    .filter-value {
+      color: var(--ink);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .filter-summary {
+      margin: 0;
+      color: #40515d;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #ece7df;
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 840px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #ece7df;
+      padding: 10px 9px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 12px;
+      text-transform: uppercase;
+      background: #fbfaf7;
+    }
+
+    th math {
+      font-size: 15px;
+      text-transform: none;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tr.sampled {
+      background: var(--green-soft);
+    }
+
+    .keep-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 999px;
+      border: 1px solid var(--green);
+      background: var(--green-soft);
+      color: #134e4a;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .keep-badge.dropped {
+      border-color: #d4d4d8;
+      background: #f4f4f5;
+      color: #71717a;
+    }
+
+    .token {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 50px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: var(--radius);
+      border: 1px solid #cfd7df;
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr) 64px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .bar-token {
+      font-weight: 750;
+    }
+
+    .bar-track {
+      position: relative;
+      height: 28px;
+      border-radius: var(--radius);
+      border: 1px solid #d7dce2;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    .bar-base,
+    .bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      min-width: 2px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      transition: width 180ms ease;
+    }
+
+    .bar-base {
+      background: #e5e7eb;
+    }
+
+    .bar-fill {
+      background: linear-gradient(90deg, var(--blue), #14b8a6);
+    }
+
+    .bar-row.sampled .bar-fill {
+      background: linear-gradient(90deg, var(--green), #22c55e);
+    }
+
+    .bar-row.dropped {
+      color: #8a949e;
+    }
+
+    .bar-row.dropped .bar-fill {
+      min-width: 0;
+    }
+
+    .percent {
+      color: var(--muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+    }
+
+    .sample-box {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid #d9e3ea;
+      border-radius: var(--radius);
+      background: #f8fbfd;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend span::before {
+      content: "";
+      width: 18px;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+    }
+
+    .legend .final::before {
+      background: linear-gradient(90deg, var(--blue), #14b8a6);
+    }
+
+    .sample-box h2 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .sample-result {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .sample-token {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: var(--radius);
+      background: var(--green-soft);
+      border: 1px solid var(--green);
+      color: #134e4a;
+      font-weight: 800;
+    }
+
+    .note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e0d8cc;
+      border-radius: var(--radius);
+      background: #fffdf9;
+      color: #40515d;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .note strong {
+      color: var(--ink);
+    }
+
+    .distribution-note {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .mini-note {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfaf7;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .mini-note strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        display: block;
+      }
+
+      .controls {
+        justify-content: flex-start;
+        margin-top: 14px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        width: min(100vw - 20px, 1180px);
+        margin: 18px auto;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .sentence {
+        font-size: 18px;
+      }
+
+      .temperature-box {
+        grid-template-columns: 1fr;
+      }
+
+      .temp-value {
+        width: 100%;
+      }
+
+      .distribution-note {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 48px minmax(0, 1fr) 56px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>Temperature 采样演示</h1>
+        <p class="lead">观察 temperature 如何改变概率分布，以及 top_k / top_p 如何在采样前裁剪候选 token。</p>
+      </div>
+      <div class="controls">
+        <button id="lowBtn" type="button">低温 0.3</button>
+        <button id="normalBtn" class="active" type="button">默认 1.0</button>
+        <button id="highBtn" type="button">高温 1.8</button>
+        <button id="sampleBtn" class="primary" type="button">采样一次</button>
+      </div>
+    </header>
+
+    <section class="context" aria-label="当前上下文">
+      <span class="context-label">当前上下文</span>
+      <span class="sentence">我喜欢喝 <span class="blank" id="blankToken">____</span></span>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <h2>从 logit 到概率</h2>
+
+        <div class="temperature-box">
+          <div class="slider-row">
+            <input id="temperatureInput" type="range" min="0.2" max="2.0" step="0.1" value="1.0" aria-label="Temperature">
+            <div class="slider-meta">
+              <span>更保守</span>
+              <span>更随机</span>
+            </div>
+          </div>
+          <div class="temp-value" id="temperatureValue">T=1.0</div>
+        </div>
+
+        <div class="sampling-box">
+          <div class="mode-row" aria-label="候选过滤方式">
+            <span class="filter-label">候选过滤</span>
+            <button id="filterNoneBtn" class="active" type="button">不过滤</button>
+            <button id="topKBtn" type="button">top_k</button>
+            <button id="topPBtn" type="button">top_p</button>
+          </div>
+          <div class="filter-control" id="topKControl">
+            <span class="filter-label">top_k</span>
+            <input id="topKInput" type="range" min="1" max="8" step="1" value="4" aria-label="top k">
+            <span class="filter-value" id="topKValue">4</span>
+          </div>
+          <div class="filter-control" id="topPControl">
+            <span class="filter-label">top_p</span>
+            <input id="topPInput" type="range" min="0.1" max="1" step="0.05" value="0.9" aria-label="top p">
+            <span class="filter-value" id="topPValue">0.90</span>
+          </div>
+          <p class="filter-summary" id="filterSummary"></p>
+        </div>
+
+        <p class="formula">
+          模型先给每个候选 token 一个原始分数 <code>logit</code>，temperature 会在 softmax 前缩放这些分数。
+          <math class="math-formula" display="block" aria-label="p i equals softmax of z divided by T sub i">
+            <mrow>
+              <msub>
+                <mi>p</mi>
+                <mi>i</mi>
+              </msub>
+              <mo>=</mo>
+              <msub>
+                <mrow>
+                  <mtext>softmax</mtext>
+                  <mo>(</mo>
+                  <mfrac>
+                    <mi>z</mi>
+                    <mi>T</mi>
+                  </mfrac>
+                  <mo>)</mo>
+                </mrow>
+                <mi>i</mi>
+              </msub>
+            </mrow>
+          </math>
+          <span class="symbol-note">其中 z 表示所有候选 token 的 logit 向量；T 是 temperature；i 表示取第 i 个候选 token 的概率。过滤后会把保留下来的概率重新归一化，得到最终采样概率。</span>
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>token</th>
+                <th>
+                  <math aria-label="z sub i">
+                    <msub>
+                      <mi>z</mi>
+                      <mi>i</mi>
+                    </msub>
+                  </math>
+                </th>
+                <th>
+                  <math aria-label="z sub i divided by T">
+                    <mfrac>
+                      <msub>
+                        <mi>z</mi>
+                        <mi>i</mi>
+                      </msub>
+                      <mi>T</mi>
+                    </mfrac>
+                  </math>
+                </th>
+                <th>
+                  <math aria-label="p sub i equals softmax z divided by T sub i">
+                    <mrow>
+                      <msub>
+                        <mi>p</mi>
+                        <mi>i</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <msub>
+                        <mrow>
+                          <mtext>softmax</mtext>
+                          <mo>(</mo>
+                          <mfrac>
+                            <mi>z</mi>
+                            <mi>T</mi>
+                          </mfrac>
+                          <mo>)</mo>
+                        </mrow>
+                        <mi>i</mi>
+                      </msub>
+                    </mrow>
+                  </math>
+                </th>
+                <th>
+                  <math aria-label="p sub i divided by p sub top">
+                    <mfrac>
+                      <msub>
+                        <mi>p</mi>
+                        <mi>i</mi>
+                      </msub>
+                      <msub>
+                        <mi>p</mi>
+                        <mtext>top</mtext>
+                      </msub>
+                    </mfrac>
+                  </math>
+                </th>
+                <th>保留</th>
+                <th>
+                  <math aria-label="q sub i">
+                    <msub>
+                      <mi>q</mi>
+                      <mi>i</mi>
+                    </msub>
+                  </math>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="calcRows"></tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          <strong>读表方式：</strong><code>p_i</code> 是 temperature 后的完整概率；top_k/top_p 先决定哪些 token 被保留，再把保留项重新归一化成最终采样概率 <code>q_i</code>。
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>采样概率</h2>
+
+        <div class="distribution-note">
+          <div class="mini-note">
+            <strong>T &lt; 1</strong>
+            概率更集中，输出更稳定。
+          </div>
+          <div class="mini-note">
+            <strong>T = 1</strong>
+            保持模型原始分布。
+          </div>
+          <div class="mini-note">
+            <strong>T &gt; 1</strong>
+            概率更分散，输出更多样。
+          </div>
+        </div>
+
+        <div class="legend">
+          <span>完整概率 p_i</span>
+          <span class="final">最终采样概率 q_i</span>
+        </div>
+
+        <div class="bars" id="bars"></div>
+
+        <div class="sample-box">
+          <h2>按最终概率采样</h2>
+          <div class="sample-result" id="sampleResult">点击“采样一次”，按最终概率随机抽取一个 token。</div>
+          <div class="note">
+            <strong>注意：</strong>采样不是永远选择概率最高的 token，而是按最终概率 <code>q_i</code> 抽签。被 top_k/top_p 过滤掉的 token 概率会变成 0。
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const candidates = [
+      { token: "茶", logit: 3.0 },
+      { token: "咖啡", logit: 2.2 },
+      { token: "水", logit: 1.2 },
+      { token: "果汁", logit: 0.8 },
+      { token: "牛奶", logit: 0.3 },
+      { token: "可乐", logit: -0.2 },
+      { token: "汤", logit: -0.7 },
+      { token: "汽车", logit: -1.4 }
+    ];
+
+    let temperature = 1.0;
+    let filterMode = "none";
+    let topK = 4;
+    let topP = 0.9;
+    let sampledToken = null;
+
+    const temperatureInput = document.getElementById("temperatureInput");
+    const temperatureValue = document.getElementById("temperatureValue");
+    const calcRows = document.getElementById("calcRows");
+    const bars = document.getElementById("bars");
+    const sampleResult = document.getElementById("sampleResult");
+    const blankToken = document.getElementById("blankToken");
+    const lowBtn = document.getElementById("lowBtn");
+    const normalBtn = document.getElementById("normalBtn");
+    const highBtn = document.getElementById("highBtn");
+    const sampleBtn = document.getElementById("sampleBtn");
+    const filterNoneBtn = document.getElementById("filterNoneBtn");
+    const topKBtn = document.getElementById("topKBtn");
+    const topPBtn = document.getElementById("topPBtn");
+    const topKControl = document.getElementById("topKControl");
+    const topPControl = document.getElementById("topPControl");
+    const topKInput = document.getElementById("topKInput");
+    const topPInput = document.getElementById("topPInput");
+    const topKValue = document.getElementById("topKValue");
+    const topPValue = document.getElementById("topPValue");
+    const filterSummary = document.getElementById("filterSummary");
+
+    function computeRows() {
+      const scaled = candidates.map(item => ({
+        ...item,
+        scaledLogit: item.logit / temperature
+      }));
+
+      const maxScaled = Math.max(...scaled.map(item => item.scaledLogit));
+      const withExp = scaled.map(item => ({
+        ...item,
+        stableExp: Math.exp(item.scaledLogit - maxScaled)
+      }));
+      const total = withExp.reduce((sum, item) => sum + item.stableExp, 0);
+      const maxStableExp = Math.max(...withExp.map(item => item.stableExp));
+
+      const baseRows = withExp.map(item => ({
+        ...item,
+        probability: item.stableExp / total,
+        relativeToTop: item.stableExp / maxStableExp,
+        kept: true
+      }));
+
+      const keptTokens = chooseKeptTokens(baseRows);
+      const keptTotal = baseRows.reduce((sum, item) => (
+        keptTokens.has(item.token) ? sum + item.probability : sum
+      ), 0);
+
+      return baseRows.map(item => ({
+        ...item,
+        kept: keptTokens.has(item.token),
+        finalProbability: keptTokens.has(item.token) ? item.probability / keptTotal : 0
+      }));
+    }
+
+    function sortedByProbability(rows) {
+      return [...rows].sort((a, b) => {
+        if (b.probability !== a.probability) return b.probability - a.probability;
+        return b.logit - a.logit;
+      });
+    }
+
+    function chooseKeptTokens(rows) {
+      const sorted = sortedByProbability(rows);
+      if (filterMode === "top_k") {
+        return new Set(sorted.slice(0, topK).map(item => item.token));
+      }
+
+      if (filterMode === "top_p") {
+        const kept = [];
+        let cumulative = 0;
+        for (const item of sorted) {
+          kept.push(item);
+          cumulative += item.probability;
+          if (cumulative >= topP) break;
+        }
+        return new Set(kept.map(item => item.token));
+      }
+
+      return new Set(rows.map(item => item.token));
+    }
+
+    function formatPercent(value) {
+      return `${(value * 100).toFixed(1)}%`;
+    }
+
+    function setTemperature(value) {
+      temperature = Number(value);
+      temperatureInput.value = temperature.toFixed(1);
+      sampledToken = null;
+      render();
+    }
+
+    function setFilterMode(mode) {
+      filterMode = mode;
+      sampledToken = null;
+      render();
+    }
+
+    function sample(rows) {
+      const roll = Math.random();
+      let cursor = 0;
+      for (const row of rows) {
+        if (row.finalProbability <= 0) continue;
+        cursor += row.finalProbability;
+        if (roll <= cursor) return row;
+      }
+      return rows.find(row => row.finalProbability > 0) || rows[0];
+    }
+
+    function sampleOnce() {
+      const rows = computeRows();
+      sampledToken = sample(rows).token;
+      render();
+    }
+
+    function renderPresetButtons() {
+      const presets = [
+        { el: lowBtn, value: 0.3 },
+        { el: normalBtn, value: 1.0 },
+        { el: highBtn, value: 1.8 }
+      ];
+
+      presets.forEach(item => {
+        item.el.classList.toggle("active", Math.abs(temperature - item.value) < 0.001);
+      });
+    }
+
+    function renderFilterControls(rows) {
+      filterNoneBtn.classList.toggle("active", filterMode === "none");
+      topKBtn.classList.toggle("active", filterMode === "top_k");
+      topPBtn.classList.toggle("active", filterMode === "top_p");
+      topKControl.classList.toggle("active", filterMode === "top_k");
+      topPControl.classList.toggle("active", filterMode === "top_p");
+      topKValue.textContent = String(topK);
+      topPValue.textContent = topP.toFixed(2);
+      topKInput.value = String(topK);
+      topPInput.value = topP.toFixed(2);
+
+      const keptRows = rows.filter(row => row.kept);
+      if (filterMode === "top_k") {
+        filterSummary.textContent = `top_k = ${topK}：只保留完整概率最高的 ${keptRows.length} 个候选 token，然后重新归一化。`;
+      } else if (filterMode === "top_p") {
+        const mass = keptRows.reduce((sum, row) => sum + row.probability, 0);
+        filterSummary.textContent = `top_p = ${topP.toFixed(2)}：按概率从高到低累加，保留达到阈值的最小集合；当前保留 ${keptRows.length} 个，原始累计概率 ${formatPercent(mass)}。`;
+      } else {
+        filterSummary.textContent = "不过滤：所有候选 token 都参与最终采样。";
+      }
+    }
+
+    function renderTable(rows) {
+      calcRows.innerHTML = rows.map(row => {
+        const className = row.token === sampledToken ? "sampled" : "";
+        const keepText = row.kept ? "保留" : "过滤";
+        const keepClass = row.kept ? "keep-badge" : "keep-badge dropped";
+        return `<tr class="${className}">
+          <td><span class="token">${escapeHtml(row.token)}</span></td>
+          <td>${row.logit.toFixed(1)}</td>
+          <td>${row.scaledLogit.toFixed(3)}</td>
+          <td>${formatPercent(row.probability)}</td>
+          <td>${formatPercent(row.relativeToTop)}</td>
+          <td><span class="${keepClass}">${keepText}</span></td>
+          <td>${formatPercent(row.finalProbability)}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderBars(rows) {
+      bars.innerHTML = rows.map(row => {
+        const classes = ["bar-row"];
+        if (!row.kept) classes.push("dropped");
+        if (row.token === sampledToken) classes.push("sampled");
+        return `<div class="${classes.join(" ")}">
+          <div class="bar-token">${escapeHtml(row.token)}</div>
+          <div class="bar-track">
+            <div class="bar-base" style="width: ${Math.max(row.probability * 100, 0.8).toFixed(2)}%"></div>
+            <div class="bar-fill" style="width: ${Math.max(row.finalProbability * 100, row.kept ? 0.8 : 0).toFixed(2)}%"></div>
+          </div>
+          <div class="percent">${formatPercent(row.finalProbability)}</div>
+        </div>`;
+      }).join("");
+    }
+
+    function renderSample(rows) {
+      if (!sampledToken) {
+        blankToken.textContent = "____";
+        sampleResult.textContent = "点击“采样一次”，按最终概率随机抽取一个 token。";
+        return;
+      }
+
+      const row = rows.find(item => item.token === sampledToken);
+      blankToken.textContent = sampledToken;
+      sampleResult.innerHTML = `本次抽到 <span class="sample-token">${escapeHtml(sampledToken)}</span>，它的最终采样概率是 ${formatPercent(row.finalProbability)}。`;
+    }
+
+    function render() {
+      const rows = computeRows();
+      temperatureValue.textContent = `T=${temperature.toFixed(1)}`;
+      renderPresetButtons();
+      renderFilterControls(rows);
+      renderTable(rows);
+      renderBars(rows);
+      renderSample(rows);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    temperatureInput.addEventListener("input", event => {
+      setTemperature(event.target.value);
+    });
+    lowBtn.addEventListener("click", () => setTemperature(0.3));
+    normalBtn.addEventListener("click", () => setTemperature(1.0));
+    highBtn.addEventListener("click", () => setTemperature(1.8));
+    sampleBtn.addEventListener("click", sampleOnce);
+    filterNoneBtn.addEventListener("click", () => setFilterMode("none"));
+    topKBtn.addEventListener("click", () => setFilterMode("top_k"));
+    topPBtn.addEventListener("click", () => setFilterMode("top_p"));
+    topKInput.addEventListener("input", event => {
+      topK = Number.parseInt(event.target.value, 10);
+      sampledToken = null;
+      render();
+    });
+    topPInput.addEventListener("input", event => {
+      topP = Number(event.target.value);
+      sampledToken = null;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

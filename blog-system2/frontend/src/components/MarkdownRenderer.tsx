@@ -348,6 +348,90 @@ const markdownStyles = `
   width: 100%;
   height: 100%;
 }
+
+.markdown-content .html-block-wrapper {
+  margin-bottom: 1.2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--code-block-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.markdown-content .html-block-wrapper:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.dark .markdown-content .html-block-wrapper:hover {
+  box-shadow: 0 4px 20px rgba(96, 165, 250, 0.15);
+}
+
+.markdown-content .html-block-wrapper .html-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--code-header-bg);
+  border-bottom: 1px solid var(--border-color);
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.markdown-content .html-block-wrapper .html-lang {
+  font-weight: bold;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.markdown-content .html-block-wrapper .html-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.markdown-content .html-block-wrapper .html-body > div {
+  overflow: hidden;
+}
+
+.markdown-content .html-block-wrapper .html-body > div {
+  overflow: hidden;
+}
+
+.markdown-content .html-block-wrapper .html-body.expanded {
+  grid-template-rows: 1fr;
+}
+
+.markdown-content .html-block-wrapper .html-body.expanded iframe {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.markdown-content .html-block-wrapper .html-body.expanded iframe::-webkit-scrollbar {
+  display: none;
+}
+
+.markdown-content .html-block-wrapper .expand-hint {
+  text-align: center;
+  padding: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.markdown-content .html-block-wrapper .expand-hint:hover {
+  opacity: 1;
+  color: var(--primary-color);
+}
 `;
 
 
@@ -428,6 +512,46 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, children }) => {
   );
 };
 
+interface HtmlBlockProps {
+  src: string;
+}
+
+const HtmlBlock: React.FC<HtmlBlockProps> = ({ src }) => {
+  const [expanded, setExpanded] = useState(false);
+  const fileName = src.replace(/^\\data\\posts\\img\\\d+/, "").split("/").pop()?.replace(/\.html$/, "") || "HTML";
+
+  return (
+    <div className="html-block-wrapper not-prose cursor-target">
+      <div className="html-header">
+        <span className="html-lang">
+          <span style={{ opacity: 0.7 }}>&lt;/&gt;</span> {fileName}
+        </span>
+        <button
+          className="code-btn"
+          onClick={() => setExpanded(!expanded)}
+          title={expanded ? "收起" : "展开"}
+        >
+          {expanded ? "收起" : "展开"}
+        </button>
+      </div>
+      <div className={`html-body ${expanded ? "expanded" : ""}`}>
+        <div>
+          <iframe
+            src={src}
+            style={{ width: "100%", height: "100vh", border: "none" }}
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
+        </div>
+      </div>
+      {!expanded && (
+        <div className="expand-hint" onClick={() => setExpanded(true)}>
+          ··· 点击展开内容 ···
+        </div>
+      )}
+    </div>
+  );
+};
+
 const renderer = {
   code({ text, lang }: { text: string; lang?: string }) {
     const language = lang || "";
@@ -492,6 +616,9 @@ export default function MarkdownRenderer({
     const mathInlines: string[] = [];
     const mermaidBlocks: string[] = [];
     const videoBlocks: string[] = [];
+    const htmlBlocks: string[] = [];
+
+
 
     let protectedText = content.replace(
       /```mermaid\r?\n([\s\S]*?)```/g,
@@ -499,7 +626,15 @@ export default function MarkdownRenderer({
         mermaidBlocks.push(formula);
         return `<!--MERMAID_${mermaidBlocks.length - 1}-->`;
       }
-    )
+    );
+
+    protectedText = protectedText.replace(
+      /```html\r?\n([\s\S]*?)```/g,
+      (match, formula) => {
+        htmlBlocks.push(formula);
+        return `<!--HTML_${htmlBlocks.length - 1}-->`;
+      }
+    );
 
     protectedText = protectedText.replace(
       /```video\r?\n([\s\S]*?)```/g,
@@ -573,6 +708,15 @@ export default function MarkdownRenderer({
       }
     })
 
+    html = html.replace(/<!--HTML_(\d+)-->/g, (match, index) => {
+      try {
+        return `<html-block data-src="${encodeURIComponent(htmlBlocks[parseInt(index)])}"></html-block>`;
+      }
+      catch {
+        return `<div></div>`;
+      }
+    })
+    
     if (slug) {
       html = html.replace(
         /<img([^>]*)src="\.\/([^"]+)"([^>]*)>/g,
@@ -655,12 +799,14 @@ export default function MarkdownRenderer({
 
   const parseHtmlToReact = (html: string): React.ReactNode => {
     const parts: React.ReactNode[] = [];
-    const codeBlockRegex = /<code-block data-language="([^"]*)" data-code="([^"]*)"><\/code-block>/g;
     let lastIndex = 0;
     let match;
     let key = 0;
 
-    while ((match = codeBlockRegex.exec(html)) !== null) {
+    // Process both code blocks and html blocks in order
+    const combinedRegex = /<code-block data-language="([^"]*)" data-code="([^"]*)"><\/code-block>|<html-block data-src="([^"]*)"><\/html-block>/g;
+
+    while ((match = combinedRegex.exec(html)) !== null) {
       if (match.index > lastIndex) {
         const beforeContent = html.slice(lastIndex, match.index);
         parts.push(
@@ -671,9 +817,16 @@ export default function MarkdownRenderer({
         );
       }
 
-      const language = match[1];
-      const code = decodeURIComponent(match[2]);
-      parts.push(<CodeBlock key={key++} language={language}>{code}</CodeBlock>);
+      if (match[1] !== undefined) {
+        // code block
+        const language = match[1];
+        const code = decodeURIComponent(match[2]);
+        parts.push(<CodeBlock key={key++} language={language}>{code}</CodeBlock>);
+      } else if (match[3] !== undefined) {
+        // html block
+        const src = decodeURIComponent(match[3]);
+        parts.push(<HtmlBlock key={key++} src={src} />);
+      }
 
       lastIndex = match.index + match[0].length;
     }
