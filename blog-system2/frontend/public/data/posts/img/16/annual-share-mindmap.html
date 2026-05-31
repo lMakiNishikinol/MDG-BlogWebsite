@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDG AI 年度分享会 · 思维导图</title>
+<style>
+:root {
+  --mm-bg: #f5f7fa;
+  --mm-bg-end: #f7f9f7;
+  --mm-surface: rgba(255,255,255,.82);
+  --mm-surface-solid: #ffffff;
+  --mm-text: #1f2937;
+  --mm-muted: #64748b;
+  --mm-border: rgba(148,163,184,.32);
+  --mm-primary: #2563eb;
+  --mm-primary-strong: #1d4ed8;
+  --mm-primary-soft: rgba(37,99,235,.10);
+  --mm-cyan: #0891b2;
+  --mm-green: #16a34a;
+  --mm-violet: #7c3aed;
+  --mm-amber: #d97706;
+  --mm-cyan: #0891b2;
+  --mm-cyan-soft: rgba(8,145,178,.10);
+  --mm-link: rgba(37,99,235,.36);
+  --mm-shadow: rgba(0,0,0,.06);
+  --mm-shadow-active: rgba(29,78,216,.22);
+  --mm-overlay: rgba(0,0,0,.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mm-bg: #0b1121;
+    --mm-bg-end: #111827;
+    --mm-surface: rgba(30,41,59,.78);
+    --mm-surface-solid: #1e293b;
+    --mm-text: #e2e8f0;
+    --mm-muted: #94a3b8;
+    --mm-border: rgba(100,116,139,.35);
+    --mm-primary: #60a5fa;
+    --mm-primary-strong: #93c5fd;
+    --mm-primary-soft: rgba(96,165,250,.12);
+    --mm-cyan: #22d3ee;
+    --mm-green: #4ade80;
+    --mm-violet: #a78bfa;
+    --mm-amber: #fbbf24;
+    --mm-cyan-soft: rgba(34,211,238,.12);
+    --mm-link: rgba(96,165,250,.28);
+    --mm-shadow: rgba(0,0,0,.25);
+    --mm-shadow-active: rgba(96,165,250,.25);
+    --mm-overlay: rgba(0,0,0,.45);
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:var(--font-geist-sans,"Geist"),Inter,ui-sans-serif,system-ui,-apple-system,"Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,var(--mm-bg),var(--mm-bg-end));
+  color:var(--mm-text);
+  -webkit-font-smoothing:antialiased;
+}
+#app{display:flex;flex-direction:column;height:100dvh;width:100%;position:relative}
+
+/* Toolbar */
+#toolbar{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  background:var(--mm-surface);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--mm-border);flex-shrink:0;
+  flex-wrap:wrap;z-index:10;min-height:56px;
+}
+#toolbar .tb-group{display:flex;align-items:center;gap:8px}
+#search-input{
+  height:40px;padding:0 14px;border-radius:8px;border:1.5px solid var(--mm-border);
+  background:var(--mm-surface-solid);color:var(--mm-text);font-size:14px;
+  width:200px;outline:none;transition:border-color .2s,box-shadow .2s;
+  font-family:inherit;
+}
+#search-input:focus{border-color:var(--mm-primary);box-shadow:0 0 0 3px var(--mm-primary-soft)}
+#search-input::placeholder{color:var(--mm-muted)}
+#search-clear{
+  display:none;background:none;border:none;color:var(--mm-muted);cursor:pointer;
+  font-size:18px;padding:2px 6px;border-radius:4px;margin-left:-36px;
+}
+#search-clear:hover{color:var(--mm-text);background:var(--mm-primary-soft)}
+.tb-divider{width:1px;height:24px;background:var(--mm-border);flex-shrink:0}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filter-chip{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;
+  border:1.5px solid var(--mm-border);background:transparent;color:var(--mm-muted);
+  font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap;
+}
+.filter-chip:hover{border-color:var(--mm-primary);color:var(--mm-primary)}
+.filter-chip.active{background:var(--mm-primary);color:#fff;border-color:var(--mm-primary)}
+.filter-chip .chip-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;border-radius:9px;font-size:10px;padding:0 5px;
+  background:var(--mm-primary-soft);color:var(--mm-muted);
+}
+.filter-chip.active .chip-count{background:rgba(255,255,255,.2);color:rgba(255,255,255,.9)}
+.zoom-controls{display:flex;align-items:center;gap:4px;margin-left:auto}
+.zoom-btn{
+  width:32px;height:32px;border-radius:6px;border:1.5px solid var(--mm-border);
+  background:var(--mm-surface-solid);color:var(--mm-text);cursor:pointer;
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;font-family:inherit;
+}
+.zoom-btn:hover{background:var(--mm-primary-soft);border-color:var(--mm-primary)}
+.zoom-btn:active{transform:scale(.94)}
+.zoom-pct{
+  font-size:13px;color:var(--mm-muted);min-width:42px;text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.expand-btn{
+  padding:5px 12px;border-radius:6px;border:1.5px solid var(--mm-border);
+  background:var(--mm-surface-solid);color:var(--mm-text);cursor:pointer;
+  font-size:12px;transition:all .15s;font-family:inherit;white-space:nowrap;
+}
+.expand-btn:hover{background:var(--mm-primary-soft);border-color:var(--mm-primary)}
+
+/* Canvas */
+#canvas-container{
+  flex:1;overflow:hidden;position:relative;cursor:grab;
+  background-image:radial-gradient(circle,var(--mm-border) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+#canvas-container:active{cursor:grabbing}
+#mindmap-svg{width:100%;height:100%;display:block}
+
+/* Node styles */
+.mm-node{cursor:pointer;transition:opacity .2s}
+.mm-node .card-bg{fill:var(--mm-surface-solid);stroke:var(--mm-border);stroke-width:1.2;filter:drop-shadow(0 2px 6px var(--mm-shadow));transition:all .2s}
+.mm-node:hover .card-bg{stroke:var(--mm-primary);filter:drop-shadow(0 4px 14px var(--mm-shadow-active))}
+.mm-node.root-node .card-bg{fill:var(--mm-primary);stroke:var(--mm-primary-strong);stroke-width:1.5}
+.mm-node.root-node .node-title{fill:#fff}
+.mm-node.root-node .node-sub{fill:rgba(255,255,255,.72)}
+.mm-node.category-node .card-bg{fill:var(--mm-primary-soft);stroke:var(--mm-primary);stroke-width:1;stroke-dasharray:0}
+.mm-node.category-node .node-title{fill:var(--mm-primary);font-weight:700}
+.mm-node.subcat-node .card-bg{fill:var(--mm-cyan-soft);stroke:var(--mm-cyan);stroke-width:1;stroke-dasharray:3 2}
+.mm-node.subcat-node .node-title{fill:var(--mm-cyan);font-weight:600}
+.mm-node .node-title{font-size:14px;font-weight:600;fill:var(--mm-text)}
+.mm-node .node-date{font-size:11px;fill:var(--mm-muted)}
+.mm-node .node-speaker{font-size:11px;fill:var(--mm-muted)}
+.mm-node .node-summary{font-size:11px;fill:var(--mm-muted)}
+.mm-node.node-match .card-bg{stroke:var(--mm-primary-strong);stroke-width:1.5;filter:drop-shadow(0 0 12px var(--mm-shadow-active))}
+.mm-node.node-match .card-bg-before{fill:var(--mm-primary-soft)}
+.mm-node.node-dim{opacity:.3}
+.mm-node.node-hidden{display:none}
+
+/* Tag badges */
+.tag-badge-bg{fill:var(--mm-primary-soft);rx:4}
+.tag-badge-text{font-size:10px;fill:var(--mm-primary)}
+
+/* Connecting lines */
+.mm-link{fill:none;stroke:var(--mm-link);stroke-width:1.5;transition:opacity .2s}
+
+/* Collapse badge */
+.collapse-badge{transition:all .2s}
+.collapse-badge circle{fill:var(--mm-amber);stroke:var(--mm-border);stroke-width:1}
+.collapse-badge text{font-size:11px;font-weight:700;fill:#fff;text-anchor:middle;dominant-baseline:central}
+
+/* Animations */
+.node-enter{animation:fadeSlideIn .2s ease-out both}
+@keyframes fadeSlideIn{
+  from{opacity:0;transform:translateY(8px) scale(.94)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Detail Panel */
+#detail-panel{
+  position:fixed;top:0;right:0;width:320px;height:100dvh;
+  background:var(--mm-surface);backdrop-filter:blur(16px);
+  border-left:1px solid var(--mm-border);
+  transform:translateX(100%);transition:transform .25s cubic-bezier(.22,1,.36,1);
+  z-index:20;display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+#detail-panel.open{transform:translateX(0)}
+#detail-panel .dp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 12px;border-bottom:1px solid var(--mm-border);flex-shrink:0;
+}
+#detail-panel .dp-header h3{font-size:16px;font-weight:600}
+#detail-panel .dp-close{
+  width:32px;height:32px;border-radius:6px;border:none;background:transparent;
+  color:var(--mm-muted);cursor:pointer;font-size:20px;display:flex;
+  align-items:center;justify-content:center;transition:all .15s;
+}
+#detail-panel .dp-close:hover{background:var(--mm-primary-soft);color:var(--mm-text)}
+#detail-panel .dp-body{padding:20px;flex:1;overflow-y:auto}
+#detail-panel .dp-guide{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;text-align:center;color:var(--mm-muted);gap:12px;
+}
+#detail-panel .dp-guide svg{opacity:.3;margin-bottom:4px}
+#detail-panel .dp-guide p{font-size:14px;line-height:1.6}
+#detail-panel .dp-field{margin-bottom:16px}
+#detail-panel .dp-field .dp-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mm-muted);margin-bottom:4px}
+#detail-panel .dp-field .dp-value{font-size:14px;line-height:1.5;color:var(--mm-text)}
+#detail-panel .dp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+#detail-panel .dp-tag{
+  padding:3px 10px;border-radius:12px;font-size:12px;
+  background:var(--mm-primary-soft);color:var(--mm-primary);
+}
+#detail-panel .dp-btn{
+  display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  padding:10px 20px;border-radius:8px;background:var(--mm-primary);color:#fff;
+  text-decoration:none;font-size:14px;font-weight:500;border:none;cursor:pointer;
+  transition:all .15s;font-family:inherit;
+}
+#detail-panel .dp-btn:hover{background:var(--mm-primary-strong);transform:translateY(-1px)}
+
+/* Mobile detail as bottom drawer */
+@media (max-width:768px){
+  #detail-panel{
+    top:auto;bottom:0;left:0;right:0;width:100%;height:auto;max-height:52vh;
+    border-left:none;border-top:1px solid var(--mm-border);
+    border-radius:16px 16px 0 0;transform:translateY(100%);
+  }
+  #detail-panel.open{transform:translateY(0)}
+  #detail-panel .dp-header{padding:16px 16px 10px}
+  #detail-panel .dp-body{padding:16px}
+  #detail-panel .dp-drag-handle{
+    width:36px;height:4px;border-radius:2px;background:var(--mm-border);
+    margin:0 auto 8px;display:block;flex-shrink:0;
+  }
+}
+@media (min-width:769px){
+  #detail-panel .dp-drag-handle{display:none}
+}
+
+/* Mobile responsive toolbar */
+@media (max-width:768px){
+  #toolbar{padding:8px 12px;gap:6px}
+  #search-input{width:140px;height:32px;font-size:13px}
+  .filter-chip{font-size:11px;padding:3px 10px}
+  .zoom-btn{width:28px;height:28px;font-size:14px}
+  .expand-btn{font-size:11px;padding:4px 10px}
+}
+
+/* Toast / empty-state */
+#empty-state{
+  display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;color:var(--mm-muted);z-index:5;pointer-events:none;
+}
+#empty-state.visible{display:block}
+#empty-state p{font-size:16px;margin-top:8px}
+
+/* Scrollbar */
+#detail-panel::-webkit-scrollbar{width:4px}
+#detail-panel::-webkit-scrollbar-track{background:transparent}
+#detail-panel::-webkit-scrollbar-thumb{background:var(--mm-border);border-radius:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important;scroll-behavior:auto!important}.node-enter{animation:none!important}.node-fade{transition:opacity .01ms!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <div class="tb-group">
+      <input type="text" id="search-input" placeholder="搜索标题、讲者、标签…" aria-label="搜索节点" autocomplete="off">
+      <button id="search-clear" aria-label="清除搜索">&times;</button>
+    </div>
+    <div class="tb-divider"></div>
+    <div class="filter-chips" id="filter-chips"></div>
+    <div class="tb-divider"></div>
+    <div class="tb-group">
+      <button class="expand-btn" id="expand-all-btn" aria-label="展开全部">展开全部</button>
+      <button class="expand-btn" id="collapse-all-btn" aria-label="折叠全部">折叠全部</button>
+    </div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" id="zoom-out-btn" aria-label="缩小" title="缩小">−</button>
+      <span class="zoom-pct" id="zoom-pct">100%</span>
+      <button class="zoom-btn" id="zoom-in-btn" aria-label="放大" title="放大">+</button>
+      <button class="zoom-btn" id="zoom-reset-btn" aria-label="重置视图" title="重置视图" style="font-size:13px">⟲</button>
+    </div>
+  </div>
+
+  <div id="canvas-container">
+    <svg id="mindmap-svg" aria-label="思维导图"></svg>
+    <div id="empty-state"><p>没有匹配的节点</p></div>
+  </div>
+
+  <div id="detail-panel" role="dialog" aria-label="节点详情">
+    <div class="dp-drag-handle"></div>
+    <div class="dp-header">
+      <h3>节点详情</h3>
+      <button class="dp-close" id="dp-close-btn" aria-label="关闭详情">&times;</button>
+    </div>
+    <div class="dp-body" id="dp-body">
+      <div class="dp-guide" id="dp-guide">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p>点击任意节点查看详情</p>
+      </div>
+      <div id="dp-content" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ========== DATA ========== */
+  var mindmapData = {
+    id: 'root',
+    title: 'MDG AI 年度分享会',
+    children: [
+      {
+        id: 'ml', title: '机器学习', speaker: '', date: '', summary: '机器学习深度学习与AI前沿',
+        children: [
+          { id: '1st_meeting', title: '机器学习导论', date: '2025-10-19', summary: '介绍机器学习本质定义与三大学习范式（有监督、无监督、强化学习），梳理核心术语与学习路径', tags: ['机器学习','导论'], url: '/posts/1st_meeting/' },
+          { id: '3rd_meeting', title: '深度学习四个训练流程', date: '2025-11-02', summary: '详解MLP完整训练流程：前向传播计算输出、损失函数量化误差（MSE/交叉熵）、反向传播求梯度、SGD/BGD/Mini-batch参数更新', tags: ['深度学习','入门'], url: '/posts/3rd_meeting/' },
+          {
+            id: 'dl', title: '深度学习', speaker: '', date: '', summary: '深度学习进阶系列',
+            children: [
+              { id: '4th_meeting', title: '卷积神经网络', date: '2025-11-09', summary: '从向量/矩阵/张量逐步过渡到CNN核心设计：卷积层提取特征、池化层降采样、局部连接与权值共享，以VGG为例分析经典架构', tags: ['深度学习','CNN'], url: '/posts/4th_meeting/' },
+              { id: '5th_meeting', title: '学习相关的技巧', date: '2025-11-30', summary: '总结深度学习常见问题（欠拟合/过拟合/梯度消失爆炸/损失震荡），讲解BN、迁移学习、超参数搜索、早停等实用训练技巧', tags: ['深度学习','技巧'], url: '/posts/5th_meeting/' },
+              { id: '6th_meeting', title: '过拟合与正则化', date: '2025-12-07', summary: '深入讲解三大正则化技术：L2权重衰减抑制过拟合、L1正则化产生稀疏解、Dropout随机失活神经元，分析原理与选用策略', tags: ['深度学习','正则化'], url: '/posts/6th_meeting/' },
+              { id: '7th_meeting', title: '初始化与学期收尾', date: '2025-12-14', summary: '从期望与方差出发推导Xavier/Kaiming初始化原理，解释ReLU对初始化要求的特殊性，并科普无监督学习（聚类与降维）基本概念', tags: ['深度学习','初始化'], url: '/posts/7th_meeting/' },
+              { id: '8th_meeting_resnet', title: 'ResNet学习总结', date: '2026-03-22', summary: '解析深层网络退化问题，阐释残差学习F(x)=H(x)-x与shortcut连接，介绍Bottleneck高效结构及其对Transformer的深远影响', tags: ['深度学习','ResNet'], url: '/posts/8th_meeting_resnet/' },
+              {
+                id: 'cv', title: '计算机视觉', speaker: '', date: '', summary: '计算机视觉专题',
+                children: [
+                  { id: '9th_meeting_YOLO_archive', title: 'YOLO目标检测', date: '2026-03-29', summary: '从YOLOv1单阶段端到端检测、YOLOv2先验框与批归一化，到YOLOv3特征金字塔多级检测，系统梳理目标检测技术演进', tags: ['CV','YOLO'], url: '/posts/9th_meeting_YOLO_archive/' },
+                  { id: '10th_meeting_img_seg', title: '图像分割', date: '2026-04-12', summary: '梳理图像分割三大任务：语义分割（FCN/U-Net）、实例分割（Mask R-CNN）、全景分割，介绍各类方法的网络设计与应用场景', tags: ['CV','分割'], url: '/posts/10th_meeting_img_seg/' }
+                ]
+              },
+              {
+                id: 'nlp', title: 'NLP', speaker: '', date: '', summary: '自然语言处理',
+                children: [
+                  { id: '12th_meeting_NLP', title: '自然语言处理', date: '2026-04-26', summary: '梳理NLP技术演进：词嵌入将离散词映射为稠密向量、RNN/LSTM门控机制处理序列、Transformer自注意力并行建模全局依赖', tags: ['NLP','基础','transformer'], url: '/posts/12th_meeting_NLP/' }
+                ]
+              },
+              {
+                id: 'multimodal', title: '多模态', speaker: '', date: '', summary: '多模态与生成模型',
+                children: [
+                  { id: '13th_meeting', title: '多模态与CLIP', date: '2026-05-10', summary: '讲解多模态学习核心理念：通过对比学习将图文映射到统一嵌入空间，以CLIP双塔架构为例分析图文对齐训练方式', tags: ['多模态','CLIP'], url: '/posts/13th_meeting/' },
+                  { id: '14th_meeting', title: 'Diffusion模型', date: '2026-05-17', summary: '深入扩散模型原理：前向过程逐步加噪至纯噪声、反向过程学习去噪恢复数据，解析DDPM核心公式推导与训练方法', tags: ['多模态','Diffusion'], url: '/posts/14th_meeting/' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'rl', title: '强化学习', speaker: '', date: '', summary: '强化学习入门',
+            children: [
+              { id: '11th_meeting_RL', title: '强化学习', date: '2026-04-19', summary: '系统讲解强化学习：MDP五要素、价值函数与贝尔曼方程、三大方法体系（DQN/PPO/Actor-Critic），并介绍RLHF如何微调大模型', tags: ['强化学习','基础'], url: '/posts/11th_meeting_RL/' }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'basic-algo', title: '基础算法', speaker: '', date: '', summary: '基础算法与编程练习',
+        children: [
+          { id: 'py_test', title: 'Python测试题', date: '2025-10-26', summary: '摸底测试', tags: ['机器学习','算法'], url: '/posts/py_test/' },
+          { id: '2nd_meeting', title: 'Python测试题讲评', date: '2025-10-26', summary: '讲评', tags: ['机器学习','算法'], url: '/posts/2nd_meeting/' }
+        ]
+      },
+      {
+        id: 'agent', title: 'Agent与工具调用', speaker: '', date: '', summary: 'Agent入门',
+        children: [
+          { id: '15th_meeting', title: 'Agent入门', date: '2026-05-24', summary: '从基础概念讲起：Token编码与采样策略（Temperature/Top-k/Top-p），拓展到MCP协议标准、上下文工程等Agent开发关键技术', tags: ['Agent','工具调用'], url: '/posts/15th_meeting/' }
+        ]
+      }
+    ]
+  };
+
+  /* ========== CONSTANTS ========== */
+  var NODE_W_ROOT = 260;
+  var NODE_W_CAT = 190;
+  var NODE_W_LEAF = 210;
+  var NODE_H_ROOT = 56;
+  var NODE_H_CAT = 56;
+  var NODE_H_LEAF = 90;
+  var H_GAP_ROOT_CAT = 80;
+  var H_GAP_CAT_LEAF = 70;
+  var V_GAP_SIBLING = 16;
+  var V_GAP_CATEGORY = 44;
+  var PAD_TOP = 120;
+  var PAD_BOTTOM = 80;
+  var PAD_LEFT = 60;
+  var PAD_RIGHT = 80;
+
+  /* ========== STATE ========== */
+  var state = {
+    collapsed: {},
+    selectedId: null,
+    searchQuery: '',
+    filterTag: null,
+    zoom: 2.5,
+    panX: 0,
+    panY: 0,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0,
+    dragPanStartX: 0,
+    dragPanStartY: 0,
+    allNodeIds: [],
+    tagCounts: {},
+    flatNodes: {}
+  };
+
+  /* ========== DOM REFS ========== */
+  var svg = document.getElementById('mindmap-svg');
+  var container = document.getElementById('canvas-container');
+  var searchInput = document.getElementById('search-input');
+  var searchClear = document.getElementById('search-clear');
+  var filterChips = document.getElementById('filter-chips');
+  var zoomPct = document.getElementById('zoom-pct');
+  var zoomInBtn = document.getElementById('zoom-in-btn');
+  var zoomOutBtn = document.getElementById('zoom-out-btn');
+  var zoomResetBtn = document.getElementById('zoom-reset-btn');
+  var expandAllBtn = document.getElementById('expand-all-btn');
+  var collapseAllBtn = document.getElementById('collapse-all-btn');
+  var detailPanel = document.getElementById('detail-panel');
+  var dpCloseBtn = document.getElementById('dp-close-btn');
+  var dpBody = document.getElementById('dp-body');
+  var dpGuide = document.getElementById('dp-guide');
+  var dpContent = document.getElementById('dp-content');
+  var emptyState = document.getElementById('empty-state');
+
+  /* ========== LAYOUT ========== */
+  function calculateMaxDepth(node) {
+    var maxChildDepth = 0;
+    if (node.children) {
+      for (var i = 0; i < node.children.length; i++) {
+        var childDepth = calculateMaxDepth(node.children[i]);
+        if (childDepth > maxChildDepth) maxChildDepth = childDepth;
+      }
+    }
+    return 1 + maxChildDepth;
+  }
+
+  function computeColumnPositions(maxDepth) {
+    var cols = [];
+    cols[0] = PAD_LEFT + NODE_W_ROOT / 2;
+    cols[1] = cols[0] + NODE_W_ROOT / 2 + H_GAP_ROOT_CAT + NODE_W_CAT / 2;
+    for (var d = 2; d <= maxDepth; d++) {
+      cols[d] = cols[d-1] + NODE_W_LEAF / 2 + H_GAP_CAT_LEAF + NODE_W_LEAF / 2;
+    }
+    return cols;
+  }
+
+  function computeLayout(data) {
+    var cats = data.children || [];
+    var yCursor = PAD_TOP;
+    var catPositions = [];
+    var maxDepth = calculateMaxDepth(data);
+    var colPos = computeColumnPositions(maxDepth);
+
+    for (var ci = 0; ci < cats.length; ci++) {
+      var cat = cats[ci];
+      var children = cat.children || [];
+      var totals = calcBlockHeights(children);
+      var totalBlockH = Math.max(totals.totalH, NODE_H_CAT);
+
+      cat._blockStartY = yCursor;
+      cat._blockH = totalBlockH;
+      cat._y = yCursor + totalBlockH / 2;
+      cat._w = NODE_W_CAT;
+      cat._h = NODE_H_CAT;
+      cat._type = 'category';
+
+      positionChildren(children, yCursor, 2);
+
+      catPositions.push({ cat: cat, y: yCursor, h: totalBlockH });
+      yCursor += totalBlockH + V_GAP_CATEGORY;
+    }
+
+    yCursor -= V_GAP_CATEGORY;
+    yCursor += PAD_BOTTOM;
+
+    var totalH = Math.max(yCursor, 700);
+    var totalW = colPos[maxDepth] + NODE_W_LEAF / 2 + PAD_RIGHT;
+
+    data._y = totalH / 2;
+    data._x = colPos[0];
+    data._w = NODE_W_ROOT;
+    data._h = NODE_H_ROOT;
+    data._type = 'root';
+
+    for (var ci2 = 0; ci2 < cats.length; ci2++) {
+      cats[ci2]._x = colPos[1];
+      assignX(cats[ci2].children || [], 2, colPos, maxDepth);
+    }
+
+    return { totalW: totalW, totalH: totalH, colPos: colPos };
+  }
+
+  function calcBlockHeights(children) {
+    var totalH = 0;
+    var hasSub = false;
+    for (var i = 0; i < children.length; i++) {
+      var c = children[i];
+      if (c.children && c.children.length > 0) {
+        hasSub = true;
+        var subTotals = calcBlockHeights(c.children);
+        var subH = NODE_H_CAT + (subTotals.totalH > 0 ? V_GAP_CATEGORY + subTotals.totalH : 0);
+        totalH += subH + (i < children.length - 1 ? V_GAP_CATEGORY : 0);
+      } else {
+        totalH += NODE_H_LEAF + (i < children.length - 1 ? V_GAP_SIBLING : 0);
+      }
+    }
+    return { totalH: totalH, hasSub: hasSub };
+  }
+
+  function positionChildren(children, yStart, depth) {
+    var y = yStart;
+    for (var i = 0; i < children.length; i++) {
+      var c = children[i];
+      if (c.children && c.children.length > 0) {
+        var subTotals = calcBlockHeights(c.children);
+        var subH = NODE_H_CAT + (subTotals.totalH > 0 ? V_GAP_CATEGORY + subTotals.totalH : 0);
+        c._blockStartY = y;
+        c._blockH = subH;
+        c._y = y + subH / 2;
+        c._w = NODE_W_CAT;
+        c._h = NODE_H_CAT;
+        c._type = 'subcategory';
+        positionChildren(c.children, y + NODE_H_CAT + V_GAP_CATEGORY, depth + 1);
+        y += subH + V_GAP_CATEGORY;
+      } else {
+        c._y = y + NODE_H_LEAF / 2;
+        c._w = NODE_W_LEAF;
+        c._h = NODE_H_LEAF;
+        c._type = 'leaf';
+        y += NODE_H_LEAF + V_GAP_SIBLING;
+      }
+    }
+  }
+
+  function assignX(children, depth, colPos, maxDepth) {
+    var idx = Math.min(depth, maxDepth);
+    var x = colPos[idx];
+    for (var i = 0; i < children.length; i++) {
+      var c = children[i];
+      c._x = x;
+      if (c._type === 'subcategory' && c.children) {
+        assignX(c.children, depth + 1, colPos, maxDepth);
+      }
+    }
+  }
+
+  /* ========== RENDER ========== */
+  var rafPending = false;
+  var svgNS = 'http://www.w3.org/2000/svg';
+
+  function buildIdMap(node) {
+    if (node.id) state.flatNodes[node.id] = node;
+    if (node.children) {
+      for (var i = 0; i < node.children.length; i++) {
+        buildIdMap(node.children[i]);
+      }
+    }
+  }
+
+  function collectAllIds(node, arr) {
+    if (node.id && node._type !== 'root') arr.push(node.id);
+    if (node.children) {
+      for (var i = 0; i < node.children.length; i++) {
+        collectAllIds(node.children[i], arr);
+      }
+    }
+  }
+
+  function collectAllTags(data) {
+    var tags = {};
+    function walk(node) {
+      if (node.tags) {
+        for (var i = 0; i < node.tags.length; i++) {
+          var t = node.tags[i];
+          tags[t] = (tags[t] || 0) + 1;
+        }
+      }
+      if (node.children) {
+        for (var i = 0; i < node.children.length; i++) walk(node.children[i]);
+      }
+    }
+    walk(data);
+    return tags;
+  }
+
+  function isNodeVisible(nodeId) {
+    if (state.searchQuery) {
+      var node = state.flatNodes[nodeId];
+      if (node && matchesSearch(node, state.searchQuery)) return true;
+      return isChildOfMatch(nodeId);
+    }
+    if (!state.searchQuery && !state.filterTag) return true;
+    return true;
+  }
+
+  function isChildOfMatch(nodeId) {
+    var node = state.flatNodes[nodeId];
+    if (!node) return false;
+    var cat = findCategory(nodeId);
+    if (!cat) return false;
+    if (matchesSearch(cat, state.searchQuery)) return true;
+    return searchDescendants(cat, state.searchQuery);
+  }
+
+  function searchDescendants(node, q) {
+    if (!node.children) return false;
+    for (var i = 0; i < node.children.length; i++) {
+      var child = node.children[i];
+      if (matchesSearch(child, q)) return true;
+      if ((child._type === 'category' || child._type === 'subcategory') && searchDescendants(child, q)) return true;
+    }
+    return false;
+  }
+
+  function expandAncestors(nodeId) {
+    function findParent(container, targetId) {
+      if (!container.children) return null;
+      for (var i = 0; i < container.children.length; i++) {
+        var child = container.children[i];
+        if (child.id === targetId) return container;
+        if (child.children) {
+          var found = findParent(child, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+    var parent = findParent(mindmapData, nodeId);
+    while (parent && parent._type !== 'root') {
+      state.collapsed[parent.id] = false;
+      parent = findParent(mindmapData, parent.id);
+    }
+  }
+
+  function hasDirectLeafMatch(node, tag) {
+    if (!node.children) return false;
+    for (var i = 0; i < node.children.length; i++) {
+      var child = node.children[i];
+      if (child._type !== 'subcategory' && child.tags && child.tags.indexOf(tag) !== -1) return true;
+    }
+    return false;
+  }
+
+  function matchesSearch(node, q) {
+    if (!q) return true;
+    q = q.toLowerCase();
+    return (node.title && node.title.toLowerCase().indexOf(q) !== -1) ||
+           (node.speaker && node.speaker.toLowerCase().indexOf(q) !== -1) ||
+           (node.summary && node.summary.toLowerCase().indexOf(q) !== -1) ||
+           (node.date && node.date.indexOf(q) !== -1) ||
+           (node.tags && node.tags.some(function(t){ return t.toLowerCase().indexOf(q) !== -1; }));
+  }
+
+  function nodeMatchesFilter(node, tag) {
+    if (!tag) return true;
+    if (node._type === 'root') return true;
+    if (node._type === 'category' || node._type === 'subcategory') {
+      var kids = node.children || [];
+      for (var i = 0; i < kids.length; i++) {
+        if (kids[i]._type === 'subcategory') {
+          if (nodeMatchesFilter(kids[i], tag)) return true;
+        } else if (kids[i].tags && kids[i].tags.indexOf(tag) !== -1) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return node.tags && node.tags.indexOf(tag) !== -1;
+  }
+
+  function findCategory(childId) {
+    function search(node) {
+      if (!node.children) return null;
+      for (var i = 0; i < node.children.length; i++) {
+        var child = node.children[i];
+        if (child.id === childId) return node;
+        if ((child._type === 'category' || child._type === 'subcategory') && child.children) {
+          var result = search(child);
+          if (result) return result;
+        }
+      }
+      return null;
+    }
+    return search(mindmapData);
+  }
+
+  function render() {
+    try {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(function(){
+        rafPending = false;
+        _render();
+      });
+    } catch(e) {
+      console.error('Render error:', e);
+    }
+  }
+
+  function _render() {
+    var layout = computeLayout(mindmapData);
+    svg.setAttribute('viewBox', '0 0 ' + layout.totalW + ' ' + layout.totalH);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+    var gMain = svg.querySelector('#g-main');
+    if (!gMain) {
+      gMain = document.createElementNS(svgNS, 'g');
+      gMain.id = 'g-main';
+      svg.appendChild(gMain);
+    }
+
+    var transform = 'translate(' + state.panX + ',' + state.panY + ') scale(' + state.zoom + ')';
+    gMain.setAttribute('transform', transform);
+
+    // Clear - only clear content groups, not SVG structure
+    var linksGroup = gMain.querySelector('#g-links');
+    var nodesGroup = gMain.querySelector('#g-nodes');
+    var badgesGroup = gMain.querySelector('#g-badges');
+    if (!linksGroup) { linksGroup = createElem('g', { id: 'g-links' }); gMain.appendChild(linksGroup); }
+    if (!nodesGroup) { nodesGroup = createElem('g', { id: 'g-nodes' }); gMain.appendChild(nodesGroup); }
+    if (!badgesGroup) { badgesGroup = createElem('g', { id: 'g-badges' }); gMain.appendChild(badgesGroup); }
+    while (linksGroup.firstChild) linksGroup.removeChild(linksGroup.firstChild);
+    while (nodesGroup.firstChild) nodesGroup.removeChild(nodesGroup.firstChild);
+    while (badgesGroup.firstChild) badgesGroup.removeChild(badgesGroup.firstChild);
+
+    var searchActive = !!state.searchQuery;
+    var searchNodes = new Set();
+    if (searchActive) {
+      for (var id in state.flatNodes) {
+        var n = state.flatNodes[id];
+        if (n._type !== 'root' && matchesSearch(n, state.searchQuery)) {
+          searchNodes.add(n.id);
+          // Also add parent category
+          var cat = findCategory(n.id);
+          if (cat) searchNodes.add(cat.id);
+        }
+      }
+    }
+
+    // Auto-expand ancestors of search results
+    if (searchActive) {
+      searchNodes.forEach(function(sid){
+        expandAncestors(sid);
+      });
+    }
+
+    var hasVisible = false;
+
+    // Draw root
+    drawNode(nodesGroup, mindmapData, searchNodes, searchActive);
+
+    // Draw categories and their children (nested hierarchy)
+    var cats = mindmapData.children || [];
+    for (var ci = 0; ci < cats.length; ci++) {
+      var cat = cats[ci];
+      var catCollapsed = state.collapsed[cat.id];
+      var catMatch = searchNodes.has(cat.id);
+
+      drawCategoryNode(nodesGroup, cat, catCollapsed, searchActive, catMatch);
+
+      if (!catCollapsed) {
+        var anyVisible = drawNestedChildren(nodesGroup, linksGroup, badgesGroup, cat, cat, searchNodes, searchActive);
+        if (anyVisible) hasVisible = true;
+      } else {
+        var kidCount = countVisibleLeaves(cat);
+        if (kidCount > 0) {
+          drawCollapseBadge(badgesGroup, cat._x + cat._w / 2 + 10, cat._y, kidCount);
+        }
+      }
+
+      // Connector from root to category
+      drawConnector(linksGroup, mindmapData._x + mindmapData._w / 2, mindmapData._y, cat._x - cat._w / 2, cat._y);
+    }
+
+    // Empty state
+    if (searchActive && !hasVisible) {
+      emptyState.classList.add('visible');
+    } else {
+      emptyState.classList.remove('visible');
+    }
+
+    // Filter dimming
+    if (state.filterTag) {
+      applyFilterDim();
+    }
+  }
+
+  function drawNode(gMain, node, searchNodes, searchActive) {
+    var x = node._x;
+    var y = node._y;
+    var w = node._w;
+    var h = node._h;
+    var isMatch = searchActive && (searchNodes.has(node.id) || matchesSearch(node, state.searchQuery));
+
+    var g = createElem('g', {
+      class: 'mm-node root-node' + (isMatch ? ' node-match' : ''),
+      'data-id': node.id,
+      style: 'animation:fadeSlideIn .25s ease-out both'
+    });
+    g.addEventListener('click', function(e){ e.stopPropagation(); selectNode(node.id); });
+
+    var rx = 10;
+    var rect = createElem('rect', {
+      class: 'card-bg', x: x - w/2, y: y - h/2, width: w, height: h, rx: rx
+    });
+    g.appendChild(rect);
+
+    var titleY = y + 5;
+    var title = createElem('text', {
+      class: 'node-title', x: x, y: titleY,
+      'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'font-size': '16'
+    });
+    title.textContent = node.title;
+    g.appendChild(title);
+
+    gMain.appendChild(g);
+  }
+
+  function drawCategoryNode(gMain, cat, collapsed, searchActive, isMatch) {
+    var x = cat._x;
+    var y = cat._y;
+    var w = cat._w;
+    var h = cat._h;
+    var kidCount = (cat.children || []).length;
+
+    var g = createElem('g', {
+      class: 'mm-node category-node' + (isMatch ? ' node-match' : ''),
+      'data-id': cat.id,
+      style: 'animation:fadeSlideIn .25s ease-out both'
+    });
+    g.addEventListener('click', function(e){
+      e.stopPropagation();
+      toggleCollapse(cat.id);
+    });
+
+    var rect = createElem('rect', {
+      class: 'card-bg', x: x - w/2, y: y - h/2, width: w, height: h, rx: 8
+    });
+    g.appendChild(rect);
+
+    var title = createElem('text', {
+      class: 'node-title', x: x, y: y,
+      'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'font-size': '14'
+    });
+    title.textContent = cat.title;
+    g.appendChild(title);
+
+    if (kidCount > 0) {
+      var sub = createElem('text', {
+        class: 'node-date', x: x + w/2 - 14, y: y - h/2 + 14,
+        'text-anchor': 'end', 'font-size': '10'
+      });
+      sub.textContent = kidCount + '项';
+      g.appendChild(sub);
+
+      var arrow = createElem('text', {
+        x: x - w/2 + 12, y: y,
+        'text-anchor': 'middle', 'dominant-baseline': 'central',
+        'font-size': '12', fill: 'var(--mm-muted)'
+      });
+      arrow.textContent = collapsed ? '▶' : '▼';
+      arrow.style.transition = 'transform .15s';
+      g.appendChild(arrow);
+    }
+
+    if (collapsed) {
+      g.classList.add('collapsed');
+    }
+
+    gMain.appendChild(g);
+  }
+
+  function drawLeafNode(gMain, node, searchActive, isMatch) {
+    var x = node._x;
+    var y = node._y;
+    var w = node._w;
+    var h = node._h;
+    var q = state.searchQuery;
+
+    var g = createElem('g', {
+      class: 'mm-node leaf-node' + (isMatch ? ' node-match' : ''),
+      'data-id': node.id,
+      style: 'animation:fadeSlideIn .25s ease-out both'
+    });
+    g.addEventListener('click', function(e){
+      e.stopPropagation();
+      selectNode(node.id);
+    });
+
+    var rect = createElem('rect', {
+      class: 'card-bg', x: x - w/2, y: y - h/2, width: w, height: h, rx: 8
+    });
+    g.appendChild(rect);
+
+    // Title
+    var title = createElem('text', {
+      class: 'node-title', x: x - w/2 + 12, y: y - h/2 + 20,
+      'font-size': '13'
+    });
+    title.textContent = truncate(node.title, 22);
+    g.appendChild(title);
+
+    // Date
+    if (node.date) {
+      var dateEl = createElem('text', {
+        class: 'node-date', x: x - w/2 + 12, y: y - h/2 + 40,
+        'font-size': '11'
+      });
+      dateEl.textContent = node.date;
+      g.appendChild(dateEl);
+    }
+
+    // Speaker
+    if (node.speaker) {
+      var speakerLabel = node.speaker === '待补充' ? '待补充' : node.speaker;
+      var speakerEl = createElem('text', {
+        class: 'node-speaker', x: x - w/2 + (node.date ? 82 : 12), y: y - h/2 + 40,
+        'font-size': '11'
+      });
+      speakerEl.textContent = node.date ? '· ' + speakerLabel : speakerLabel;
+      g.appendChild(speakerEl);
+    }
+
+    // Tags (max 2)
+    if (node.tags && node.tags.length > 0) {
+      var tagsToShow = node.tags.slice(0, 2);
+      var tagX = x - w/2 + 12;
+      for (var ti = 0; ti < tagsToShow.length; ti++) {
+        var t = tagsToShow[ti];
+        var tw = t.length * 8 + 14;
+        var tagBg = createElem('rect', {
+          class: 'tag-badge-bg', x: tagX, y: y + h/2 - 22, width: tw, height: 18, rx: 4
+        });
+        g.appendChild(tagBg);
+        var tagText = createElem('text', {
+          class: 'tag-badge-text', x: tagX + tw/2, y: y + h/2 - 22 + 9,
+          'text-anchor': 'middle', 'dominant-baseline': 'central',
+          'font-size': '10'
+        });
+        tagText.textContent = t;
+        g.appendChild(tagText);
+        tagX += tw + 5;
+      }
+    }
+
+    gMain.appendChild(g);
+  }
+
+  function drawConnector(gMain, x1, y1, x2, y2) {
+    if (x2 < x1) {
+      // Swap for same-column connections: connect parent's right edge to child's right edge
+      var tmp = x2; x2 = x1; x1 = tmp;
+    }
+    var dx = (x2 - x1) * 0.4;
+    var d = 'M' + x1 + ',' + y1 + ' C' + (x1 + dx) + ',' + y1 + ' ' + (x2 - dx) + ',' + y2 + ' ' + x2 + ',' + y2;
+    var path = createElem('path', {
+      class: 'mm-link', d: d
+    });
+    gMain.appendChild(path);
+  }
+
+  function drawCollapseBadge(gMain, x, y, count) {
+    var g = createElem('g', { class: 'collapse-badge', style: 'animation:fadeSlideIn .2s ease-out both' });
+    var circle = createElem('circle', { cx: x, cy: y, r: 14 });
+    g.appendChild(circle);
+    var text = createElem('text', { x: x, y: y, 'font-size': '12', 'font-weight': '700', fill: '#fff', 'text-anchor': 'middle', 'dominant-baseline': 'central' });
+    text.textContent = count;
+    g.appendChild(text);
+    gMain.appendChild(g);
+  }
+
+  function drawSubCategoryNode(gMain, node, collapsed, searchActive, isMatch) {
+    var x = node._x;
+    var y = node._y;
+    var w = node._w;
+    var h = node._h;
+    var kidCount = countVisibleLeaves(node);
+
+    var g = createElem('g', {
+      class: 'mm-node subcat-node' + (isMatch ? ' node-match' : ''),
+      'data-id': node.id,
+      style: 'animation:fadeSlideIn .25s ease-out both'
+    });
+    g.addEventListener('click', function(e){
+      e.stopPropagation();
+      toggleCollapse(node.id);
+    });
+
+    var rect = createElem('rect', {
+      class: 'card-bg', x: x - w/2, y: y - h/2, width: w, height: h, rx: 8
+    });
+    g.appendChild(rect);
+
+    var title = createElem('text', {
+      class: 'node-title', x: x, y: y,
+      'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'font-size': '13'
+    });
+    title.textContent = node.title;
+    g.appendChild(title);
+
+    if (kidCount > 0) {
+      var arrow = createElem('text', {
+        x: x - w/2 + 10, y: y,
+        'text-anchor': 'middle', 'dominant-baseline': 'central',
+        'font-size': '11', fill: 'var(--mm-muted)'
+      });
+      arrow.textContent = collapsed ? '▶' : '▼';
+      g.appendChild(arrow);
+    }
+
+    if (collapsed) g.classList.add('collapsed');
+    gMain.appendChild(g);
+  }
+
+  function drawNestedChildren(nodesGroup, linksGroup, badgesGroup, parentNode, topCat, searchNodes, searchActive) {
+    var kids = parentNode.children || [];
+    var anyVisible = false;
+
+    for (var ki = 0; ki < kids.length; ki++) {
+      var kid = kids[ki];
+      var kidMatch = searchNodes.has(kid.id);
+
+      if (kid._type === 'subcategory') {
+        var kidCollapsed = state.collapsed[kid.id];
+        drawSubCategoryNode(nodesGroup, kid, kidCollapsed, searchActive, kidMatch);
+        drawConnector(linksGroup, parentNode._x + parentNode._w / 2, parentNode._y, kid._x - kid._w / 2, kid._y);
+
+        if (!kidCollapsed) {
+          var childVisible = drawNestedChildren(nodesGroup, linksGroup, badgesGroup, kid, topCat, searchNodes, searchActive);
+          if (childVisible) anyVisible = true;
+        } else {
+          var scCount = countVisibleLeaves(kid);
+          if (scCount > 0) {
+            drawCollapseBadge(badgesGroup, kid._x + kid._w / 2 + 10, kid._y, scCount);
+          }
+        }
+        if (!searchActive || kidMatch) anyVisible = true;
+      } else {
+        drawLeafNode(nodesGroup, kid, searchActive, kidMatch);
+        drawConnector(linksGroup, parentNode._x + parentNode._w / 2, parentNode._y, kid._x - kid._w / 2, kid._y);
+        if (!searchActive || kidMatch) anyVisible = true;
+      }
+    }
+    return anyVisible;
+  }
+
+  function countVisibleLeaves(node) {
+    var kids = node.children || [];
+    var count = 0;
+    for (var i = 0; i < kids.length; i++) {
+      if (kids[i]._type === 'subcategory') {
+        count += countVisibleLeaves(kids[i]);
+      } else {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  function createElem(tag, attrs) {
+    var el = document.createElementNS(svgNS, tag);
+    for (var k in attrs) {
+      if (k === 'class') {
+        el.setAttribute('class', attrs[k]);
+      } else {
+        el.setAttributeNS(null, k, attrs[k]);
+      }
+    }
+    return el;
+  }
+
+  function truncate(str, max) {
+    if (!str) return '';
+    if (str.length > max) return str.substring(0, max - 1) + '…';
+    return str;
+  }
+
+  /* ========== INTERACTION ========== */
+  function toggleCollapse(id) {
+    state.collapsed[id] = !state.collapsed[id];
+    render();
+  }
+
+  function selectNode(id) {
+    state.selectedId = id;
+    showDetail(id);
+    render();
+  }
+
+  function showDetail(id) {
+    var node = state.flatNodes[id];
+    if (!node || node._type === 'root' || node._type === 'category') {
+      hideDetail();
+      return;
+    }
+    dpGuide.style.display = 'none';
+    dpContent.style.display = 'block';
+    dpContent.innerHTML = '';
+
+    var fields = [
+      { label: '标题', value: node.title },
+      { label: '日期', value: node.date },
+      { label: '讲者', value: node.speaker },
+      { label: '简介', value: node.summary }
+    ];
+    for (var fi = 0; fi < fields.length; fi++) {
+      var f = fields[fi];
+      if (!f.value) continue;
+      var div = document.createElement('div');
+      div.className = 'dp-field';
+      var lbl = document.createElement('div');
+      lbl.className = 'dp-label';
+      lbl.textContent = f.label;
+      div.appendChild(lbl);
+      var val = document.createElement('div');
+      val.className = 'dp-value';
+      val.textContent = f.value;
+      div.appendChild(val);
+      dpContent.appendChild(div);
+    }
+
+    if (node.tags && node.tags.length > 0) {
+      var tagDiv = document.createElement('div');
+      tagDiv.className = 'dp-field';
+      var tagLbl = document.createElement('div');
+      tagLbl.className = 'dp-label';
+      tagLbl.textContent = '标签';
+      tagDiv.appendChild(tagLbl);
+      var tagCont = document.createElement('div');
+      tagCont.className = 'dp-tags';
+      for (var ti = 0; ti < node.tags.length; ti++) {
+        var tag = document.createElement('span');
+        tag.className = 'dp-tag';
+        tag.textContent = node.tags[ti];
+        tagCont.appendChild(tag);
+      }
+      tagDiv.appendChild(tagCont);
+      dpContent.appendChild(tagDiv);
+    }
+
+    if (node.url) {
+      var btnDiv = document.createElement('div');
+      btnDiv.className = 'dp-field';
+      var btn = document.createElement('a');
+      btn.className = 'dp-btn';
+      btn.href = node.url;
+      btn.target = '_blank';
+      btn.rel = 'noopener';
+      btn.textContent = '阅读文章 →';
+      btnDiv.appendChild(btn);
+      dpContent.appendChild(btnDiv);
+    }
+
+    detailPanel.classList.add('open');
+  }
+
+  function hideDetail() {
+    detailPanel.classList.remove('open');
+    dpGuide.style.display = 'flex';
+    dpContent.style.display = 'none';
+    state.selectedId = null;
+  }
+
+  /* ========== SEARCH ========== */
+  function performSearch() {
+    var q = searchInput.value.trim();
+    state.searchQuery = q;
+    if (q) {
+      searchClear.style.display = 'block';
+    } else {
+      searchClear.style.display = 'none';
+    }
+    render();
+  }
+
+  function clearSearch() {
+    searchInput.value = '';
+    state.searchQuery = '';
+    searchClear.style.display = 'none';
+    render();
+  }
+
+  /* ========== FILTER ========== */
+  function buildFilterChips() {
+    var tags = collectAllTags(mindmapData);
+    state.tagCounts = tags;
+    filterChips.innerHTML = '';
+    var allChip = document.createElement('button');
+    allChip.className = 'filter-chip' + (state.filterTag === null ? ' active' : '');
+    allChip.textContent = '全部';
+    allChip.addEventListener('click', function(){
+      state.filterTag = null;
+      refreshFilterChips();
+      focusOnTag(null);
+    });
+    filterChips.appendChild(allChip);
+
+    var sorted = Object.keys(tags).sort().filter(function(t){
+      return ['入门','基础','导论','工具调用','技巧','测试'].indexOf(t) === -1;
+    });
+    for (var i = 0; i < sorted.length; i++) {
+      var t = sorted[i];
+      var chip = document.createElement('button');
+      chip.className = 'filter-chip' + (state.filterTag === t ? ' active' : '');
+      chip.innerHTML = t + ' <span class="chip-count">' + tags[t] + '</span>';
+      chip.addEventListener('click', (function(tag){
+        return function(){
+          state.filterTag = state.filterTag === tag ? null : tag;
+          refreshFilterChips();
+          focusOnTag(state.filterTag);
+        };
+      })(t));
+      filterChips.appendChild(chip);
+    }
+  }
+
+  function refreshFilterChips() {
+    var chips = filterChips.querySelectorAll('.filter-chip');
+    var tags = Object.keys(state.tagCounts).sort().filter(function(t){
+      return ['入门','基础','导论','工具调用','技巧','测试'].indexOf(t) === -1;
+    });
+    chips[0].className = 'filter-chip' + (state.filterTag === null ? ' active' : '');
+    for (var i = 0; i < tags.length; i++) {
+      var chip = chips[i + 1];
+      if (chip) {
+        chip.className = 'filter-chip' + (state.filterTag === tags[i] ? ' active' : '');
+      }
+    }
+  }
+
+  function applyFilterDim() {
+    var allNodes = svg.querySelectorAll('.mm-node');
+    for (var i = 0; i < allNodes.length; i++) {
+      var g = allNodes[i];
+      var id = g.getAttribute('data-id');
+      var node = state.flatNodes[id];
+      if (!node) continue;
+      if (node._type === 'root') continue;
+      var match = nodeMatchesFilter(node, state.filterTag);
+      if (match) {
+        g.classList.remove('node-dim');
+      } else {
+        g.classList.add('node-dim');
+      }
+    }
+  }
+
+  /* ========== ZOOM & PAN ========== */
+  function setZoom(val) {
+    state.zoom = Math.max(0.45, Math.min(4.0, val));
+    zoomPct.textContent = Math.round(state.zoom * 100) + '%';
+    render();
+  }
+
+  function resetView() {
+    state.zoom = 2.5;
+    state.panX = 0;
+    state.panY = 0;
+    zoomPct.textContent = '250%';
+    render();
+  }
+
+  function focusOnTag(tag) {
+    if (!tag) {
+      resetView();
+      return;
+    }
+    // Auto-expand all ancestors containing matches
+    for (var id in state.flatNodes) {
+      var n = state.flatNodes[id];
+      if ((n._type === 'category' || n._type === 'subcategory') && nodeMatchesFilter(n, tag)) {
+        state.collapsed[n.id] = false;
+        expandAncestors(n.id);
+      }
+    }
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    var found = false;
+    for (var id in state.flatNodes) {
+      var node = state.flatNodes[id];
+      if (node._type === 'root') continue;
+      if (!nodeMatchesFilter(node, tag)) continue;
+      // Skip indirect matches: subcategories that only match through nested sub-subcategories
+      if ((node._type === 'category' || node._type === 'subcategory') && !hasDirectLeafMatch(node, tag)) continue;
+      var nx = node._x - node._w / 2;
+      var ny = node._y - node._h / 2;
+      var nx2 = node._x + node._w / 2;
+      var ny2 = node._y + node._h / 2;
+      if (nx < minX) minX = nx;
+      if (ny < minY) minY = ny;
+      if (nx2 > maxX) maxX = nx2;
+      if (ny2 > maxY) maxY = ny2;
+      found = true;
+    }
+    if (!found) return;
+    var pad = 40;
+    var centerX = (minX + maxX) / 2;
+    var centerY = (minY + maxY) / 2;
+    state.zoom = 2.5;
+    zoomPct.textContent = Math.round(state.zoom * 100) + '%';
+    state.panX = container.clientWidth / 2 - centerX * state.zoom;
+    state.panY = container.clientHeight / 2 - centerY * state.zoom;
+    render();
+  }
+
+  function setupCanvasInteraction() {
+    var isPanning = false;
+    var startX, startY;
+    var origPanX, origPanY;
+
+    container.addEventListener('mousedown', function(e){
+      if (e.target.tagName === 'text' || e.target.tagName === 'rect' || e.target.closest('.mm-node')) return;
+      isPanning = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      origPanX = state.panX;
+      origPanY = state.panY;
+      container.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function(e){
+      if (!isPanning) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      state.panX = origPanX + dx * 1.8;
+      state.panY = origPanY + dy * 1.8;
+      // Direct transform update for instant visual feedback
+      var gMain = svg.querySelector('#g-main');
+      if (gMain) gMain.setAttribute('transform', 'translate(' + state.panX + ',' + state.panY + ') scale(' + state.zoom + ')');
+    });
+
+    document.addEventListener('mouseup', function(){
+      if (isPanning) {
+        isPanning = false;
+        container.style.cursor = 'grab';
+      }
+    });
+
+    // Touch support
+    var touchStartX, touchStartY, touchPanX, touchPanY;
+    var touching = false;
+    container.addEventListener('touchstart', function(e){
+      if (e.target.closest('.mm-node')) return;
+      var t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchPanX = state.panX;
+      touchPanY = state.panY;
+      touching = true;
+    }, {passive: true});
+
+    container.addEventListener('touchmove', function(e){
+      if (!touching) return;
+      var t = e.touches[0];
+      state.panX = touchPanX + (t.clientX - touchStartX) * 1.8;
+      state.panY = touchPanY + (t.clientY - touchStartY) * 1.8;
+      // Direct transform update for instant visual feedback
+      var gMain = svg.querySelector('#g-main');
+      if (gMain) gMain.setAttribute('transform', 'translate(' + state.panX + ',' + state.panY + ') scale(' + state.zoom + ')');
+    }, {passive: true});
+
+    container.addEventListener('touchend', function(){
+      touching = false;
+    }, {passive: true});
+
+    // Mouse wheel zoom
+    container.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -0.08 : 0.08;
+      setZoom(state.zoom + delta);
+    }, {passive: false});
+  }
+
+  /* ========== KEYBOARD ========== */
+  function setupKeyboard() {
+    document.addEventListener('keydown', function(e){
+      // Esc
+      if (e.key === 'Escape') {
+        if (state.searchQuery) {
+          clearSearch();
+          e.preventDefault();
+          return;
+        }
+        if (detailPanel.classList.contains('open')) {
+          hideDetail();
+          e.preventDefault();
+          return;
+        }
+      }
+      // Enter - open article
+      if (e.key === 'Enter') {
+        if (state.selectedId) {
+          var node = state.flatNodes[state.selectedId];
+          if (node && node.url) {
+            window.open(node.url, '_blank');
+            e.preventDefault();
+            return;
+          }
+        }
+      }
+      // +/- zoom
+      if (e.key === '+' || e.key === '=') {
+        setZoom(state.zoom + 0.1);
+        e.preventDefault();
+      }
+      if (e.key === '-') {
+        setZoom(state.zoom - 0.1);
+        e.preventDefault();
+      }
+      // 0 reset
+      if (e.key === '0') {
+        resetView();
+        e.preventDefault();
+      }
+    });
+  }
+
+  /* ========== EVENT BINDING ========== */
+  function bindEvents() {
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') {
+        clearSearch();
+        e.preventDefault();
+      }
+    });
+    searchClear.addEventListener('click', clearSearch);
+
+    zoomInBtn.addEventListener('click', function(){ setZoom(state.zoom + 0.1); });
+    zoomOutBtn.addEventListener('click', function(){ setZoom(state.zoom - 0.1); });
+    zoomResetBtn.addEventListener('click', resetView);
+
+    expandAllBtn.addEventListener('click', function(){
+      for (var id in state.collapsed) {
+        state.collapsed[id] = false;
+      }
+      render();
+    });
+
+    collapseAllBtn.addEventListener('click', function(){
+      var cats = mindmapData.children || [];
+      for (var i = 0; i < cats.length; i++) {
+        state.collapsed[cats[i].id] = true;
+      }
+      render();
+    });
+
+    dpCloseBtn.addEventListener('click', hideDetail);
+
+    // Click outside detail to close
+    detailPanel.addEventListener('click', function(e){
+      if (e.target === detailPanel) hideDetail();
+    });
+  }
+
+  /* ========== INIT ========== */
+  function init() {
+    try {
+      buildIdMap(mindmapData);
+      collectAllIds(mindmapData, state.allNodeIds);
+      state.tagCounts = collectAllTags(mindmapData);
+
+      // Initially collapse some categories for demo
+      var cats = mindmapData.children || [];
+      for (var i = 0; i < cats.length; i++) {
+        state.collapsed[cats[i].id] = false;
+      }
+
+      buildFilterChips();
+      setupCanvasInteraction();
+      setupKeyboard();
+      bindEvents();
+      render();
+
+      document.title = 'MDG AI 年度分享会 · 思维导图';
+    } catch(e) {
+      console.error('Init error:', e);
+      container.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:var(--mm-muted)"><p style="font-size:18px;margin-bottom:8px">加载失败</p><p style="font-size:14px">请刷新页面重试</p></div>';
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

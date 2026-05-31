@@ -35,6 +35,19 @@
       "title": "分享会任务与预习",
       "publishDate": "2026-4-2",
       "pinned": false
+    },
+    {
+      "slug": "自制Agent任务",
+      "title": "自制Agent任务",
+      "publishDate": "2026-5-27",
+      "pinned": true
+    },
+    {
+      "slug": "提交链接",
+      "title": "Agent任务提交链接",
+      "publishDate": "2026-5-27",
+      "pinned": true
     }
+    
   ]
 }
